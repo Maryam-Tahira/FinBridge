@@ -1,0 +1,710 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FinBridge AI — Student Finance Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060b18;--bg2:#0c1429;--glass:rgba(16,28,56,.55);--border:rgba(255,255,255,.15);--t1:#ffffff;--t2:#c0ccec;--t3:#8898c0;--cyan:#00d4ff;--purple:#7c3aed;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--grad:linear-gradient(135deg,#00d4ff,#7c3aed);--sb:260px;--r:14px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{font-size:15px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.6;overflow-x:hidden;min-height:100vh}
+#bgC{position:fixed;inset:0;z-index:0;pointer-events:none}
+.gl{background:rgba(255,255,255,.07);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.15);border-radius:var(--r)}
+.sb{position:fixed;left:0;top:0;bottom:0;width:var(--sb);background:rgba(6,11,24,.96);backdrop-filter:blur(20px);border-right:1px solid rgba(255,255,255,.15);display:flex;flex-direction:column;z-index:100;padding:24px 16px;transition:transform .35s}
+.sb-brand{display:flex;align-items:center;gap:12px;padding:0 8px 24px;border-bottom:1px solid rgba(255,255,255,.15);margin-bottom:24px}
+.bn{display:block;font-size:1.25rem;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.bt{display:block;font-size:.7rem;color:var(--t3)}
+.ns{margin-bottom:16px}.nl{font-size:.68rem;color:var(--t3);font-weight:600;padding:0 12px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
+.ni{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border:none;background:0;color:var(--t2);font-size:.85rem;font-family:inherit;font-weight:500;border-radius:8px;cursor:pointer;transition:all .2s}
+.ni svg{width:18px;height:18px;flex-shrink:0}.ni:hover{background:rgba(255,255,240,.1);color:var(--t1)}.ni.ac{background:rgba(255,255,255,.07);color:#87CEFA}
+.sf{margin-top:auto;padding:12px 8px 0;border-top:1px solid rgba(255,255,255,.15)}
+.sb-dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 8px var(--green);animation:pd 2s infinite;display:inline-block}
+@keyframes pd{0%,100%{opacity:1}50%{opacity:.4}}
+.mt{display:none;position:fixed;top:14px;left:14px;z-index:200;width:42px;height:42px;background:var(--glass);border:1px solid var(--border);border-radius:8px;color:var(--t1);cursor:pointer;align-items:center;justify-content:center}
+.mc{margin-left:var(--sb);min-height:100vh;position:relative;z-index:1}
+.pg{display:none;padding:28px 36px;max-width:1200px;animation:fu .4s}.pg.ac{display:block}
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;flex-wrap:wrap;gap:16px}
+.pt{font-size:1.9rem;font-weight:800;margin-bottom:4px}
+.gt{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ps{color:var(--t2);font-size:.92rem}
+.lr{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--glass);border:1px solid var(--border);border-radius:8px;font-family:'JetBrains Mono',monospace}
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:36px}
+.sc{padding:20px;display:flex;align-items:center;gap:14px;transition:transform .25s;cursor:default}.sc:hover{transform:translateY(-3px)}
+.si{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}.si svg{width:22px;height:22px}
+.si.c{background:rgba(255,255,255,.07);color:var(--cyan)}.si.p{background:rgba(124,58,237,.15);color:var(--purple)}.si.g{background:rgba(16,185,129,.15);color:var(--green)}.si.a{background:rgba(245,158,11,.15);color:var(--amber)}
+.sv{display:block;font-size:1.5rem;font-weight:700}.sl{display:block;font-size:.76rem;color:var(--t2)}
+.st{font-size:1.15rem;font-weight:700;margin-bottom:18px}
+.fg{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.fc{background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:24px;cursor:pointer;transition:all .3s}.fc:hover{border-color:rgba(200,180,150,.7);transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.fi{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;margin-bottom:14px;font-size:1.4rem}
+.fc h3{font-size:1rem;font-weight:700;margin-bottom:6px}.fc p{font-size:.83rem;color:var(--t2);margin-bottom:10px}.fct{font-size:.8rem;font-weight:600;color:var(--cyan)}
+/* Chat */
+.cc{display:flex;flex-direction:column;height:calc(100vh - 28px);max-width:860px;margin:0 auto}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;margin-bottom:10px}
+.cai{display:flex;align-items:center;gap:12px}.av{width:38px;height:38px;background:var(--grad);border-radius:11px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:1rem}
+.cai h3{font-size:.95rem;font-weight:700}.cas{font-size:.73rem;color:var(--green)}
+.ib{width:36px;height:36px;border:1px solid var(--border);background:0;color:var(--t2);border-radius:8px;cursor:pointer;display:grid;place-items:center}.ib svg{width:17px;height:17px}
+.cm{flex:1;overflow-y:auto;padding:6px 4px;display:flex;flex-direction:column;gap:18px;scrollbar-width:thin}
+.msg{display:flex;gap:10px;max-width:85%;animation:mi .35s}@keyframes mi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.msg.u{align-self:flex-end;flex-direction:row-reverse}
+.ma{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;margin-top:3px;font-size:.8rem;font-weight:700}
+.ma.aa{background:var(--grad);color:#fff}.ma.ua{background:rgba(124,58,237,.3);color:var(--purple)}
+.mb{padding:12px 16px;border-radius:14px 14px 14px 3px;background:var(--glass);border:1px solid var(--border);font-size:.87rem;line-height:1.6}
+.msg.u .mb{background:linear-gradient(135deg,rgba(0,212,255,.12),rgba(124,58,237,.12));border-color:rgba(0,212,255,.2);border-radius:14px 14px 3px 14px}
+.mb p{margin-bottom:6px}.mb p:last-child{margin-bottom:0}.mb ul{margin:5px 0;padding-left:16px}.mb li{margin:2px 0;color:var(--t2);font-size:.83rem}
+.mtm{display:block;font-size:.66rem;color:var(--t3);margin-top:5px}
+.qa{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.qb{padding:7px 12px;background:rgba(255,255,255,.07);border:1px solid rgba(0,212,255,.2);border-radius:18px;color:var(--cyan);font-size:.76rem;font-family:inherit;font-weight:500;cursor:pointer;transition:all .2s}.qb:hover{background:rgba(255,255,255,.07)}
+.ti{display:flex;gap:5px;padding:12px 16px}.ti span{width:6px;height:6px;background:var(--cyan);border-radius:50%;animation:tp 1.4s infinite}.ti span:nth-child(2){animation-delay:.2s}.ti span:nth-child(3){animation-delay:.4s}
+@keyframes tp{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+.cia{padding:10px 0 6px}.iw{display:flex;align-items:flex-end;gap:8px;padding:7px 10px 7px 16px}
+.iw textarea{flex:1;background:0;border:none;outline:none;color:var(--t1);font-family:inherit;font-size:.87rem;resize:none;max-height:100px;padding:7px 0}.iw textarea::placeholder{color:var(--t3)}
+.sdb{width:40px;height:40px;background:var(--grad);border:none;border-radius:11px;color:#fff;cursor:pointer;display:grid;place-items:center;flex-shrink:0;transition:transform .15s}.sdb:hover{transform:scale(1.05)}.sdb svg{width:17px;height:17px}
+.ih{text-align:center;font-size:.68rem;color:var(--t3);margin-top:6px}
+/* Currency */
+.cvr{padding:28px;margin-bottom:28px}.cr{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap}
+.cig{flex:1;min-width:200px}.cig label{display:block;font-size:.76rem;color:var(--t2);font-weight:600;margin-bottom:6px}
+.cs,.ai2{width:100%;padding:11px 12px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-family:inherit;font-size:.87rem;outline:none}.cs:focus,.ai2:focus{border-color:var(--cyan)}.cs option{background:#0a0f20}
+.ai2{margin-top:9px;font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:600}
+.swb{width:44px;height:44px;background:rgba(255,255,255,.07);border:1px solid rgba(0,212,255,.2);border-radius:50%;color:var(--cyan);cursor:pointer;display:grid;place-items:center;flex-shrink:0;transition:all .3s;margin-bottom:3px}.swb:hover{transform:rotate(180deg)}.swb svg{width:18px;height:18px}
+.rd{margin-top:9px;padding:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);border-radius:8px}
+.ra{font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--cyan)}
+.rib{display:flex;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.15);font-size:.78rem;color:var(--t2);font-family:'JetBrains Mono',monospace}
+.ppg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px}
+.pp{padding:16px;text-align:center;cursor:pointer;transition:all .25s}.pp:hover{border-color:rgba(0,212,255,.3);transform:translateY(-3px)}
+.pf{font-size:1.2rem;display:block;margin-bottom:4px}.pn{display:block;font-size:.8rem;color:var(--t2);margin-bottom:3px}
+.pr{display:block;font-family:'JetBrains Mono',monospace;font-size:.95rem;font-weight:600;color:var(--cyan)}
+/* Remittance */
+.rs{padding:22px;margin-bottom:22px}.ri2{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+.rf{flex:1;min-width:150px}.rf label{display:block;font-size:.76rem;color:var(--t2);font-weight:600;margin-bottom:5px}
+.rf select,.rf input{width:100%;padding:9px 11px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-family:inherit;font-size:.85rem;outline:none}.rf select option{background:#0a0f20}
+.pb{padding:9px 20px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:transform .15s;white-space:nowrap}.pb:hover{transform:translateY(-2px)}
+.rc{padding:22px;position:relative;transition:all .25s;margin-bottom:12px}.rc:hover{transform:translateX(3px)}.rc.best{border-color:rgba(0,212,255,.3)}
+.rbdg{position:absolute;top:-1px;right:18px;padding:3px 12px;background:var(--grad);color:#fff;font-size:.7rem;font-weight:700;border-radius:0 0 8px 8px}
+.rp{display:flex;align-items:center;gap:12px;margin-bottom:16px}.rplogo{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:.83rem;flex-shrink:0}
+.rp h3{font-size:.95rem;font-weight:700}.rpt{font-size:.76rem;color:var(--t2)}
+.rdet{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.rsl{display:block;font-size:.7rem;color:var(--t3);margin-bottom:3px}.rsv{display:block;font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:600}.rsv.hl{color:var(--cyan)}
+/* Budget */
+.bo{display:grid;grid-template-columns:1fr 1.4fr;gap:16px;margin-bottom:22px}
+.bs2{padding:24px;display:flex;flex-direction:column;align-items:center;gap:22px}
+.brc{position:relative;width:150px;height:150px}.brc svg{width:100%;height:100%}
+.brt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.bra{font-size:1.35rem;font-weight:700;font-family:'JetBrains Mono',monospace}.brl{font-size:.7rem;color:var(--t2)}
+.bm{display:flex;gap:18px;text-align:center}.bml{display:block;font-size:.7rem;color:var(--t3)}.bmv{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.95rem}.bmv.grn{color:var(--green)}
+.bc2{padding:24px}.bc2 h3{font-size:.95rem;font-weight:700;margin-bottom:16px}
+.ci{display:grid;grid-template-columns:130px 1fr 70px;align-items:center;gap:12px;margin-bottom:12px}
+.cinf{display:flex;align-items:center;gap:7px}.cdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}.cnm{font-size:.8rem;color:var(--t2)}
+.cbw{height:7px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}.cb{height:100%;border-radius:4px}
+.cam{text-align:right;font-family:'JetBrains Mono',monospace;font-size:.83rem;font-weight:600}
+.ae{padding:22px;margin-top:16px}.ae h3{font-size:.95rem;font-weight:700;margin-bottom:14px}
+.ef{display:flex;gap:10px;flex-wrap:wrap}
+.ei{flex:1;min-width:130px;padding:9px 12px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-family:inherit;font-size:.85rem;outline:none}.ei:focus{border-color:var(--cyan)}.ei option{background:#0a0f20}
+/* China + Tuition + Transfer */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;margin-bottom:28px}
+.cc2{padding:22px;transition:all .25s}.cc2:hover{border-color:rgba(200,180,150,.7);transform:translateY(-3px)}
+.cc2i{font-size:1.8rem;margin-bottom:10px}.cc2 h3{font-size:1rem;font-weight:700;margin-bottom:6px}.cc2 p{font-size:.82rem;color:var(--t2);line-height:1.5;margin-bottom:8px}
+.cc2 ul{list-style:none;padding:0}.cc2 li{font-size:.8rem;color:var(--t2);padding:3px 0 3px 16px;position:relative}.cc2 li::before{content:'→';position:absolute;left:0;color:var(--cyan)}
+.tr{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tg{padding:3px 9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.07);border-radius:18px;font-size:.7rem;color:var(--cyan);font-weight:500}
+.tg.g2{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.2);color:var(--green)}.tg.a2{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.2);color:var(--amber)}.tg.p2{background:rgba(124,58,237,.1);border-color:rgba(124,58,237,.2);color:var(--purple)}
+.tc2{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.tc{padding:24px;transition:all .25s}.tc:hover{transform:translateY(-3px)}
+.tf2{font-size:2rem;margin-bottom:8px}.tc h3{font-size:1.1rem;font-weight:700;margin-bottom:3px}
+.trng{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--cyan);font-weight:600;margin-bottom:12px}
+.ttp p{font-size:.8rem;color:var(--t2);line-height:1.5}
+/* Transfer Page */
+.tf-tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.tf-tab{padding:12px 24px;background:var(--glass);border:1px solid var(--border);border-radius:12px;color:var(--t2);font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px}
+.tf-tab:hover{border-color:rgba(0,212,255,.3)}.tf-tab.active{background:rgba(255,255,255,.07);border-color:rgba(0,212,255,.3);color:var(--cyan)}
+.tf-tab .tab-icon{font-size:1.3rem}
+.tf-form{max-width:560px}
+.tf-group{margin-bottom:18px}
+.tf-group label{display:block;font-size:.8rem;color:var(--t2);font-weight:600;margin-bottom:6px}
+.tf-input{width:100%;padding:12px 14px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--t1);font-family:inherit;font-size:.95rem;outline:none;transition:border .2s}.tf-input:focus{border-color:var(--cyan)}
+.tf-input option{background:#0a0f20}
+.tf-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tf-summary{padding:20px;margin:24px 0;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(0,212,255,.12)}
+.tf-summary-row{display:flex;justify-content:space-between;padding:6px 0;font-size:.88rem}
+.tf-summary-row.total{border-top:1px solid rgba(255,255,255,.15);margin-top:8px;padding-top:12px;font-weight:700;font-size:1rem;color:var(--cyan)}
+.tf-submit{width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:8px}.tf-submit:hover{box-shadow:0 8px 30px rgba(0,212,255,.3);transform:translateY(-2px)}
+.tf-success{text-align:center;padding:48px 24px;animation:fu .5s}
+.tf-check{width:80px;height:80px;background:rgba(16,185,129,.15);border-radius:50%;display:grid;place-items:center;margin:0 auto 20px;font-size:2.5rem}
+.tf-success h2{font-size:1.4rem;font-weight:700;margin-bottom:8px;color:var(--green)}
+.tf-success p{color:var(--t2);font-size:.9rem;margin-bottom:6px}
+.tf-ref{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--cyan);margin-top:12px}
+/* Footer */
+.footer{margin-left:var(--sb);background:rgba(6,11,24,.7);padding:40px;border-top:1px solid rgba(255,255,255,.15);position:relative;z-index:1;margin-top:40px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:28px}
+.footer-brand p{font-size:.82rem;color:var(--t2);margin-top:10px;max-width:280px;line-height:1.6}
+.footer-col h4{font-size:.82rem;font-weight:700;margin-bottom:12px;color:var(--t1)}
+.footer-col a{display:block;font-size:.8rem;color:var(--t2);text-decoration:none;padding:3px 0;transition:color .2s;cursor:pointer}.footer-col a:hover{color:var(--cyan)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid rgba(255,255,255,.15);font-size:.75rem;color:var(--t3);flex-wrap:wrap;gap:8px}
+.footer-social{display:flex;gap:12px}.footer-social a{width:32px;height:32px;border:1px solid var(--border);border-radius:8px;display:grid;place-items:center;color:var(--t2);text-decoration:none;font-size:.8rem;transition:all .2s}.footer-social a:hover{border-color:var(--cyan);color:var(--cyan)}
+@media(max-width:1024px){.sg{grid-template-columns:repeat(2,1fr)}.fg,.bo{grid-template-columns:1fr}.rdet{grid-template-columns:repeat(2,1fr)}.ppg,.cg{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.sb{transform:translateX(-100%)}.sb.open{transform:translateX(0)}.mt{display:flex}.mc{margin-left:0}.pg{padding:65px 16px 20px}.pt{font-size:1.4rem}.cr{flex-direction:column}.swb{align-self:center;transform:rotate(90deg)}.ri2{flex-direction:column}.sg,.ppg,.cg{grid-template-columns:1fr}.ci{grid-template-columns:100px 1fr 55px}.footer{margin-left:0}.footer-grid{grid-template-columns:1fr}.tf-row{grid-template-columns:1fr}}
+
+/* LIGHTER CARDS */
+.gl{background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.15)!important;border-radius:var(--r);backdrop-filter:blur(20px)}
+.gl:hover{border-color:rgba(200,180,150,.7)!important;background:rgba(255,255,255,.07)!important}
+
+/* CARD HOVER ANIMATIONS */
+.sc,.fc,.cc2,.tc,.pp,.rc{transition:all .35s cubic-bezier(.4,0,.2,1)!important}
+.sc:hover,.fc:hover,.cc2:hover,.tc:hover,.pp:hover{transform:translateY(-6px) scale(1.02)!important;box-shadow:0 16px 48px rgba(255,255,255,.15),0 0 0 1px rgba(0,212,255,.2)!important}
+.rc:hover{transform:translateX(6px)!important;box-shadow:0 8px 32px rgba(255,255,255,.3)!important}
+
+/* FLOATING GRADIENT ORBS */
+.pg::before,.pg::after{content:'';position:fixed;border-radius:50%;pointer-events:none;filter:blur(80px);opacity:.22;z-index:-1;animation:float 12s ease-in-out infinite}
+.pg::before{width:400px;height:400px;background:radial-gradient(circle,rgba(0,212,255,.35),transparent);top:10%;right:-100px}
+.pg::after{width:350px;height:350px;background:radial-gradient(circle,rgba(124,58,237,.25),transparent);bottom:10%;left:-80px;animation-delay:-6s}
+@keyframes float{0%,100%{transform:translate(0,0)}25%{transform:translate(30px,-20px)}50%{transform:translate(-20px,30px)}75%{transform:translate(20px,10px)}}
+
+/* SPARKLE CARDS - gradient border on hover */
+.fc::before{content:'';position:absolute;inset:-1px;border-radius:20px;background:linear-gradient(135deg,rgba(0,212,255,.3),rgba(124,58,237,.3),rgba(16,185,129,.3));opacity:0;transition:opacity .4s;z-index:-1}
+.fc:hover::before{opacity:1}
+.fc{position:relative;overflow:hidden;background:rgba(255,255,255,.07)!important}
+.fc:nth-child(1){background:rgba(255,255,255,.06)!important}
+.fc:nth-child(2){background:rgba(255,255,255,.06)!important}
+.fc:nth-child(3){background:rgba(255,255,255,.06)!important}
+.fc:nth-child(4){background:rgba(255,255,255,.06)!important}
+
+/* China cards lighter with color tints */
+.cc2{background:rgba(255,255,255,.07)!important}
+.cc2:nth-child(1){background:rgba(255,255,255,.06)!important}
+.cc2:nth-child(2){background:rgba(255,255,255,.07)!important}
+.cc2:nth-child(3){background:rgba(255,255,255,.06)!important}
+.cc2:nth-child(4){background:rgba(255,255,255,.06)!important}
+
+/* Stat cards lighter */
+.sc{background:rgba(255,255,255,.07)!important}
+
+/* Tuition cards lighter */
+.tc{background:rgba(255,255,255,.07)!important}
+
+/* Transfer tabs lighter */
+.tf-tab{background:rgba(255,255,255,.07)!important}
+
+/* Remittance cards lighter */
+.rc{background:rgba(255,255,255,.07)!important}
+.rc.best{background:rgba(255,255,255,.07)!important;border-color:rgba(200,180,150,.7)!important}
+
+/* Pair cards lighter */
+.pp{background:rgba(255,255,255,.07)!important}
+
+/* Budget cards lighter */
+.bs2,.bc2,.ae{background:rgba(255,255,255,.07)!important}
+
+/* News items lighter */
+.news-item{background:rgba(255,255,255,.06)!important}
+.news-item:hover{background:rgba(255,255,255,.07)!important}
+.news-section{background:rgba(255,255,255,.07)!important}
+
+/* RED ACCENTS for important */
+.important{color:var(--red)!important;font-weight:600}
+.red-border{border-left:3px solid var(--red)!important}
+.red-tag{background:rgba(239,68,68,.12)!important;border-color:rgba(239,68,68,.25)!important;color:var(--red)!important}
+
+/* Transfer summary lighter */
+.tf-summary{background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.15)!important}
+.tf-form.gl{background:rgba(255,255,255,.07)!important}
+
+/* Converter card lighter */
+.cvr{background:rgba(255,255,255,.07)!important}
+
+/* Chat bubbles lighter */
+.mb{background:rgba(255,255,255,.07)!important;border-color:rgba(255,255,255,.15)!important}
+
+/* Input fields slightly lighter */
+.tf-input,.cs,.ai2,.ei,.iw{background:rgba(255,255,255,.06)!important}
+
+/* Remittance search lighter */
+.rs{background:rgba(255,255,255,.07)!important}
+
+/* Chat header lighter */
+.ch{background:rgba(255,255,255,.07)!important}
+
+/* COLORFUL TOP ACCENTS on feature cards */
+.fc:nth-child(1){border-top:2px solid rgba(0,212,255,.4)}
+.fc:nth-child(2){border-top:2px solid rgba(16,185,129,.4)}
+.fc:nth-child(3){border-top:2px solid rgba(245,158,11,.4)}
+.fc:nth-child(4){border-top:2px solid rgba(124,58,237,.4)}
+
+/* China cards colored left border */
+.cc2:nth-child(1){border-left:3px solid #10b981}
+.cc2:nth-child(2){border-left:3px solid #1677FF}
+.cc2:nth-child(3){border-left:3px solid #ef4444}
+.cc2:nth-child(4){border-left:3px solid #7c3aed}
+.cc2:nth-child(5){border-left:3px solid #f59e0b}
+.cc2:nth-child(6){border-left:3px solid #06b6d4}
+.cc2:nth-child(7){border-left:3px solid #10b981}
+
+/* BACK BUTTON */
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;background:rgba(255,255,255,.07);border:1px solid rgba(0,212,255,.18);border-radius:20px;color:var(--cyan);font-size:.82rem;font-family:inherit;font-weight:500;cursor:pointer;transition:all .2s;margin-bottom:18px}
+.back-btn:hover{background:rgba(255,255,255,.07);transform:translateX(-3px)}
+.back-btn svg{width:16px;height:16px}
+
+/* NEWS TICKER */
+.news-section{margin-top:28px;padding:24px;border-radius:var(--r);background:rgba(25,42,82,.72);border:1px solid rgba(255,255,255,.15)}
+.news-section h3{font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.news-item{padding:14px 16px;border-radius:10px;background:rgba(255,255,255,.04);border-left:3px solid var(--cyan);margin-bottom:10px;transition:all .25s;cursor:default}
+.news-item:hover{background:rgba(255,255,255,.06);transform:translateX(4px)}
+.news-item:nth-child(even){border-left-color:var(--purple)}
+.news-item:nth-child(3n){border-left-color:var(--green)}
+.news-item h4{font-size:.88rem;font-weight:600;margin-bottom:4px}
+.news-item p{font-size:.78rem;color:var(--t2);line-height:1.5}
+.news-item .news-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:.7rem;color:var(--t3)}
+.news-tag{padding:2px 8px;border-radius:10px;font-size:.65rem;font-weight:600}
+.news-tag.update{background:rgba(0,212,255,.12);color:var(--cyan)}
+.news-tag.alert{background:rgba(245,158,11,.12);color:var(--amber)}
+.news-tag.new2{background:rgba(16,185,129,.12);color:var(--green)}
+
+/* STAT CARDS colorful glow */
+.sc:nth-child(1):hover{box-shadow:0 12px 40px rgba(255,255,255,.07)!important}
+.sc:nth-child(2):hover{box-shadow:0 12px 40px rgba(124,58,237,.15)!important}
+.sc:nth-child(3):hover{box-shadow:0 12px 40px rgba(16,185,129,.15)!important}
+.sc:nth-child(4):hover{box-shadow:0 12px 40px rgba(245,158,11,.15)!important}
+
+/* Tuition cards top color */
+.tc:nth-child(1){border-top:3px solid #ef4444}
+.tc:nth-child(2){border-top:3px solid #3b82f6}
+.tc:nth-child(3){border-top:3px solid #1d4ed8}
+.tc:nth-child(4){border-top:3px solid #f59e0b}
+.tc:nth-child(5){border-top:3px solid #ef4444}
+.tc:nth-child(6){border-top:3px solid #10b981}
+
+/* Page divider decoration */
+.st::after{content:'';display:block;width:60px;height:3px;background:var(--grad);border-radius:2px;margin-top:8px}
+
+/* Live rate in header */
+.lr{background:rgba(255,255,255,.07)!important;border-color:rgba(255,255,255,.15)!important}
+.rate-change.positive{color:#059669!important}
+.rate-change.negative{color:#dc2626!important}
+
+
+/* === BRIGHT TEXT & BOLD OVERRIDES === */
+.sb,.sb *{color:#d0d8f0!important}
+.sb .ni{color:#a0b0d8!important}
+.sb .ni.ac{color:#00d4ff!important;font-weight:700!important}
+.sb .ni:hover{color:#ffffff!important}
+.sb .nl{color:#6878a0!important}
+.sb .bt{color:#6878a0!important}
+.sb .bn{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent!important}
+.sf span{color:#4ade80!important}
+
+.footer,.footer *{color:#b0b8d0!important}
+.footer h4{color:#fff!important}
+.footer a{color:#90a0c0!important}
+.footer a:hover{color:#00d4ff!important}
+.footer .bn{-webkit-text-fill-color:transparent!important}
+
+/* ALL TEXT BRIGHT + BOLD */
+h1,h2,h3,h4,.pt,.st{color:#fff!important;font-weight:800!important}
+p,.ps{color:#c0ccec!important}
+.fc h3,.cc2 h3,.tc h3,.rp h3{color:#fff!important;font-weight:700!important}
+.fc p,.cc2 p,.tc p,.ttp p{color:#a8b8d8!important;font-weight:400!important}
+.cc2 li{color:#b0c0e0!important;font-weight:400!important}
+.cc2 li::before{color:#00d4ff!important}
+.sv{color:#fff!important;font-weight:800!important;font-size:1.6rem!important}
+.sl{color:#90a8d0!important}
+
+/* CHAT text bright */
+.mb{color:#fff!important;background:rgba(255,255,255,.07)!important;border-color:rgba(255,255,255,.12)!important}
+.mb p{color:#e0e8ff!important;font-weight:400!important}
+.mb strong{color:#fff!important;font-weight:700!important}
+.msg.u .mb{background:rgba(0,212,255,.1)!important;border-color:rgba(0,212,255,.2)!important;color:#fff!important}
+.msg.u .mb p{color:#e0f0ff!important}
+.mtm{color:#6080b0!important}
+.cas{color:#4ade80!important}
+.cai h3{color:#fff!important}
+
+/* Tags vivid on dark */
+.tg{color:#00d4ff!important;background:rgba(0,212,255,.1)!important;border-color:rgba(0,212,255,.2)!important;font-weight:600!important}
+.tg.g2{background:rgba(16,185,129,.12)!important;color:#34d399!important;border-color:rgba(16,185,129,.25)!important}
+.tg.a2{background:rgba(245,158,11,.12)!important;color:#fbbf24!important;border-color:rgba(245,158,11,.25)!important}
+.tg.p2{background:rgba(124,58,237,.12)!important;color:#a78bfa!important;border-color:rgba(124,58,237,.25)!important}
+
+/* Quick btns in chat */
+.qb{background:rgba(0,212,255,.08)!important;border-color:rgba(0,212,255,.2)!important;color:#00d4ff!important;font-weight:600!important}
+.qb:hover{background:rgba(0,212,255,.18)!important}
+
+/* Gradient text */
+.gt{background:linear-gradient(135deg,#00d4ff,#a78bfa)!important;-webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important}
+
+/* Values & mono text bright */
+.ra{color:#00d4ff!important;font-weight:700!important}
+.pr{color:#00d4ff!important;font-weight:700!important}
+.rsv{color:#e0e8ff!important;font-weight:600!important}
+.rsv.hl{color:#00d4ff!important;font-weight:700!important}
+.trng{color:#00d4ff!important;font-weight:600!important}
+.cam{color:#e0e8ff!important;font-weight:600!important}
+.bra{color:#fff!important;font-weight:700!important}
+.bmv{color:#fff!important;font-weight:700!important}
+.bmv.grn{color:#34d399!important}
+.cnm{color:#b0c0e0!important}
+
+/* Stat icons vivid */
+.si.c{background:rgba(0,212,255,.15)!important;color:#00d4ff!important}
+.si.p{background:rgba(124,58,237,.15)!important;color:#a78bfa!important}
+.si.g{background:rgba(16,185,129,.15)!important;color:#34d399!important}
+.si.a{background:rgba(245,158,11,.15)!important;color:#fbbf24!important}
+
+.fct{color:#00d4ff!important;font-weight:600!important}
+
+/* Back btn */
+.back-btn{background:rgba(0,212,255,.08)!important;border-color:rgba(0,212,255,.18)!important;color:#00d4ff!important;font-weight:600!important}
+.back-btn:hover{background:rgba(0,212,255,.18)!important}
+
+/* News bright */
+.news-item{background:rgba(255,255,255,.04)!important;border-left-color:#00d4ff!important}
+.news-item:hover{background:rgba(255,255,255,.08)!important}
+.news-item h4{color:#fff!important;font-weight:700!important}
+.news-item p{color:#a8b8d8!important}
+.news-section{background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.1)!important}
+.news-section h3{color:#fff!important}
+.news-tag.update{background:rgba(0,160,255,.15)!important;color:#60b0ff!important}
+.news-tag.new2{background:rgba(16,185,129,.15)!important;color:#34d399!important}
+
+/* Buttons gradient bright */
+.sdb,.pb,.tf-submit{background:linear-gradient(135deg,#00b4e6,#7c3aed)!important}
+.sdb:hover,.pb:hover,.tf-submit:hover{box-shadow:0 6px 24px rgba(0,212,255,.35)!important}
+.av{background:linear-gradient(135deg,#00b4e6,#7c3aed)!important}
+.rbdg{background:linear-gradient(135deg,#00b4e6,#7c3aed)!important}
+
+/* Converter display */
+.rd{background:rgba(0,212,255,.06)!important;border-color:rgba(0,212,255,.15)!important}
+.rib{color:#8098c0!important}
+
+/* Transfer summary */
+.tf-summary{background:rgba(255,255,255,.04)!important;border-color:rgba(255,255,255,.1)!important}
+.tf-summary-row{color:#c0ccec!important}
+.tf-summary-row.total{color:#00d4ff!important;border-top-color:rgba(255,255,255,.1)!important}
+
+/* Live rate */
+.lr{background:rgba(255,255,255,.07)!important;border-color:rgba(255,255,255,.12)!important}
+.rate-change.positive{color:#34d399!important;font-weight:700!important}
+.rate-change.negative{color:#f87171!important;font-weight:700!important}
+
+/* Feature card colored tops brighter */
+.fc:nth-child(1){border-top:3px solid #00d4ff!important}
+.fc:nth-child(2){border-top:3px solid #34d399!important}
+.fc:nth-child(3){border-top:3px solid #fbbf24!important}
+.fc:nth-child(4){border-top:3px solid #a78bfa!important}
+
+/* Labels & form */
+.cig label,.rf label,.tf-group label{color:#90a8d0!important;font-weight:600!important}
+.cs,.ai2,.ei,.tf-input{color:#fff!important;font-weight:500!important}
+.cs option{background:#0a0f20!important;color:#fff!important}
+.ei option{background:#0a0f20!important;color:#fff!important}
+.tf-input option{background:#0a0f20!important;color:#fff!important}
+.ih{color:#5070a0!important}
+
+/* Red important items */
+.news-item[style*="border-left-color:#ef4444"]{border-left-color:#f87171!important}
+
+
+/* ===== NEW FEATURES (dark theme) ===== */
+.hs{display:flex;align-items:center;gap:22px;padding:20px 24px;margin-bottom:26px}
+.hs h3{font-size:1.05rem}.hs ul{margin:6px 0 0 18px;font-size:.84rem;color:#c0ccec}
+.hs-ring{width:92px;height:92px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--c,#00d4ff) calc(var(--p,0)*1%),rgba(255,255,255,.1) 0)}
+.hs-ring span{width:72px;height:72px;border-radius:50%;background:#0c1429;display:grid;place-items:center;font-weight:800;font-size:1.5rem}
+.smg{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.smc{padding:22px;transition:all .3s}.smc h3{font-size:1rem;margin-bottom:6px}.smc .ps{margin-bottom:12px;font-size:.82rem}
+.bar{height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin:6px 0 12px}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#00b4e6,#34d399);border-radius:4px;transition:width .4s}
+.smo{font-size:.86rem;color:#c0ccec;margin-top:10px}.smo strong{color:#fff}.smo .bad{color:#f87171}
+.ck{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:.86rem;color:#e0e8ff;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.07)}.ck input{width:17px;height:17px;accent-color:#00d4ff}
+.toast{position:fixed;right:20px;bottom:20px;background:#0c1429;color:#fff;border:1px solid rgba(0,212,255,.4);padding:14px 20px;border-radius:12px;font-size:.88rem;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:999}
+.mb table{border-collapse:collapse;margin:6px 0;font-size:.8rem}.mb td{border:1px solid rgba(255,255,255,.15);padding:4px 10px}
+.mic{font-size:1rem}
+.rtw{padding:22px;margin-top:8px}.rtw h3{font-size:1rem;margin-bottom:4px}
+.rtw input{width:100%;margin:10px 0;padding:10px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-family:inherit;outline:none}
+.rts{max-height:420px;overflow:auto}.rtb{width:100%;border-collapse:collapse;font-size:.84rem}
+.rtb th{position:sticky;top:0;background:#0c1429;text-align:left;color:#8898c0;font-size:.72rem;text-transform:uppercase;padding:8px 10px}
+.rtb td{padding:8px 10px;border-top:1px solid rgba(255,255,255,.07);color:#e0e8ff}.rtb td:nth-child(n+3){font-family:'JetBrains Mono',monospace;text-align:right}.rtb tr:hover td{background:rgba(255,255,255,.05);cursor:pointer}
+@media(max-width:1024px){.smg{grid-template-columns:1fr}.hs{flex-direction:column;text-align:center}}
+
+.tl{font-size:.78rem;color:#8898c0;margin:8px 0 0 18px}.rk{display:inline-block;padding:3px 12px;border-radius:12px;font-weight:700;font-size:.78rem}
+.dis{padding:14px 18px;margin-bottom:16px;border-left:3px solid #fbbf24;font-size:.84rem;color:#c0ccec}
+textarea.tf-input{min-height:110px;resize:vertical}.smc ul{margin:8px 0 0 18px;font-size:.84rem;color:#c0ccec}.smc li{margin:3px 0}
+input[type=range]{width:100%;accent-color:#00d4ff}
+</style></head><body>
+<canvas id="bgC"></canvas>
+<nav class="sb" id="sb">
+<div class="sb-brand"><div style="width:36px;height:36px;background:var(--grad);border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:1.1rem">F</div><div><span class="bn">FinBridge</span><span class="bt">留学金融助手 · AI Agent</span></div></div>
+<div class="ns"><div class="nl">Main</div>
+<button class="ni ac" data-page="dashboard" onclick="go('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</button>
+<button class="ni" data-page="chat" onclick="go('chat')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>AI Chat</button></div>
+<div class="ns"><div class="nl">Tools</div>
+<button class="ni" data-page="currency" onclick="go('currency')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 6v1.5M12 16.5V18"/></svg>Currency 汇率</button>
+<button class="ni" data-page="remittance" onclick="go('remittance')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-6l-2 3h-4l-2-3H2"/></svg>Remittance</button>
+<button class="ni" data-page="transfer" onclick="go('transfer')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>Send Money</button>
+<button class="ni" data-page="budget" onclick="go('budget')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Budget</button>
+<button class="ni" data-page="china" onclick="go('china')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18"/></svg>China Banking</button>
+<button class="ni" data-page="global" onclick="go('global')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>Global Banking</button>
+<button class="ni" data-page="tuition" onclick="go('tuition')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"/></svg>Tuition</button><button class="ni" data-page="smart" onclick="go('smart')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg>Smart Tools</button><button class="ni" data-page="route" onclick="go('route')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h18M15 6l6 6-6 6"/></svg>Best Route</button><button class="ni" data-page="plan" onclick="go('plan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg>Runway Plan</button><button class="ni" data-page="safety" onclick="go('safety')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg>Safety & Trust</button></div>
+<div class="sf"><span class="sb-dot"></span> <span style="font-size:.78rem;color:var(--green)">Agent Online</span></div>
+</nav>
+<button class="mt" onclick="document.getElementById('sb').classList.toggle('open')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+<main class="mc">
+<!-- DASHBOARD -->
+<section class="pg ac" id="page-dashboard">
+<div class="ph"><div><h1 class="pt">Welcome to <span class="gt">FinBridge</span></h1><p class="ps">Your AI-powered cross-border student finance assistant</p></div><div class="lr"><span style="color:var(--t3);font-size:.73rem">USD/BDT</span><span style="font-size:1rem;font-weight:600" id="uB">121.45</span><span class="rate-change positive" id="rC">+0.12%</span></div></div>
+<div class="sg"><div class="sc gl"><div class="si c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg></div><div><span class="sv">8</span><span class="sl">AI Tools</span></div></div><div class="sc gl"><div class="si p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-6l-2 3h-4l-2-3H2"/></svg></div><div><span class="sv">15+</span><span class="sl">Providers</span></div></div><div class="sc gl"><div class="si g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div><span class="sv">160+</span><span class="sl">Currencies</span></div></div><div class="sc gl"><div class="si a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div><div><span class="sv">50+</span><span class="sl">Uni Guides</span></div></div></div>
+<div class="hs gl"><div class="hs-ring" id="hsR"><span id="hsN">--</span></div><div><h3>Your Financial Health Score</h3><p class="ps">Based on your budget, savings goal and checklist progress</p><ul id="hsL"></ul></div></div>
+<h2 class="st">What can FinBridge do?</h2>
+<div class="fg">
+<div class="fc" onclick="go('chat')"><div class="fi" style="background:rgba(0,212,255,.12)">💬</div><h3>AI Finance Chat</h3><p>Ask anything about finances abroad — tuition, banking, visa payments, budgeting.</p><span class="fct">Start chatting →</span></div>
+<div class="fc" onclick="go('transfer')"><div class="fi" style="background:rgba(16,185,129,.12)">💸</div><h3>Send Money</h3><p>Simulate transfers via WeChat Pay, Alipay, or bank wire with real-time rate preview.</p><span class="fct">Send now →</span></div>
+<div class="fc" onclick="go('china')"><div class="fi" style="background:rgba(245,158,11,.12)">🏦</div><h3>China Banking</h3><p>Alipay, WeChat Pay, UnionPay, Digital Yuan — complete setup guides.</p><span class="fct">Explore →</span></div>
+<div class="fc" onclick="go('global')"><div class="fi" style="background:rgba(239,68,68,.1)">🌍</div><h3>Global Banking</h3><p>SWIFT, Wise, PayPal, Visa/MC, Revolut — worldwide payment systems & news.</p><span class="fct">Explore →</span></div>
+<div class="fc" onclick="go('currency')"><div class="fi" style="background:rgba(124,58,237,.12)">💱</div><h3>Currency & Remittance</h3><p>Convert currencies, compare transfer fees across 15+ providers.</p><span class="fct">Convert →</span></div><div class="fc" onclick="go('smart')"><div class="fi" style="background:#ecfeff">⚡</div><h3>Smart Tools</h3><p>Savings goal planner, rate alerts, hidden-fee detector and pre-departure checklist.</p><span class="fct">Open tools →</span></div><div class="fc" onclick="go('route')"><div class="fi" style="background:rgba(0,212,255,.12)">🧭</div><h3>Best Route</h3><p>Compare providers by total cost: fee + exchange margin + receiving fee.</p><span class="fct">Compare →</span></div><div class="fc" onclick="go('plan')"><div class="fi" style="background:rgba(52,211,153,.12)">📈</div><h3>Runway &amp; What-if</h3><p>How many months will your money last? Test rent, rate and scholarship changes.</p><span class="fct">Plan →</span></div><div class="fc" onclick="go('safety')"><div class="fi" style="background:rgba(248,113,113,.12)">🛡️</div><h3>Safety &amp; Trust</h3><p>Scam shield, compliance helper, tool log and privacy note.</p><span class="fct">Open →</span></div></div>
+</section>
+<!-- CHAT -->
+<section class="pg" id="page-chat"><button class="back-btn" onclick="go('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to Dashboard</button>
+<div class="cc"><div class="ch gl"><div class="cai"><div class="av">F</div><div><h3>FinBridge AI</h3><span class="cas">Online</span></div></div><button class="ib" onclick="clrChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></div><div class="cm" id="cM"></div><div class="cia"><div class="iw gl"><textarea id="cI" placeholder="Ask about finance, banking, transfers..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sndMsg()}"></textarea><button class="sdb" onclick="sndMsg()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div><p class="ih">AI-powered guidance. Verify critical financial decisions independently.</p></div></div></section>
+<section class="pg" id="page-smart"><button class="back-btn" onclick="go('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to Dashboard</button>
+<div class="ph"><div><h1 class="pt">Smart <span class="gt">Tools</span></h1><p class="ps">Plan ahead, avoid hidden fees and never miss a good rate</p></div></div>
+<div class="smg">
+<div class="smc gl"><h3>🎯 Tuition Savings Goal</h3><p class="ps">How much to save each month to reach your target.</p>
+<div class="tf-group"><label>Amount needed (USD)</label><input class="tf-input" id="gA" type="number" value="3000" oninput="goal()"></div>
+<div class="tf-row"><div class="tf-group"><label>Months left</label><input class="tf-input" id="gM" type="number" min="1" value="6" oninput="goal()"></div><div class="tf-group"><label>Already saved (USD)</label><input class="tf-input" id="gS" type="number" value="500" oninput="goal()"></div></div>
+<div class="bar"><i id="gB"></i></div><p id="gO" class="smo"></p></div>
+<div class="smc gl"><h3>🔔 Rate Alert (USD → BDT)</h3><p class="ps">Get a notification when the live rate reaches your target.</p>
+<div class="tf-group"><label>Alert me at or above (৳)</label><input class="tf-input" id="raT" type="number" step="0.01" value="121.52"></div>
+<button class="tf-submit" onclick="setAlert()">Set alert</button><p id="raO" class="smo"></p></div>
+<div class="smc gl"><h3>🕵️ Hidden Fee Detector</h3><p class="ps">Compare your bank's rate with the mid-market rate.</p>
+<div class="tf-row"><div class="tf-group"><label>Amount (USD)</label><input class="tf-input" id="hfA" type="number" value="1000" oninput="hf()"></div><div class="tf-group"><label>Bank rate (৳ per $)</label><input class="tf-input" id="hfR" type="number" step="0.01" value="119.50" oninput="hf()"></div></div>
+<p id="hfO" class="smo"></p></div>
+<div class="smc gl"><h3>✅ Pre-departure Checklist</h3><div class="bar"><i id="ckB"></i></div><div id="ckL"></div></div>
+</div></section>
+<section class="pg" id="page-route"><button class="back-btn" onclick="go('dashboard')">← Back to Dashboard</button>
+<div class="ph"><div><h1 class="pt">Best <span class="gt">Route</span></h1><p class="ps">Ranks providers by what the recipient really gets</p></div></div>
+<div class="smc gl"><div class="tf-row"><div class="tf-group"><label>Amount to send</label><input id="roA" class="tf-input" type="number" value="50000"></div><div class="tf-group"><label>Priority</label><select id="roP" class="tf-input"><option value="cheap">Cheapest</option><option value="fast">Fastest</option></select></div></div>
+<div class="tf-row"><div class="tf-group"><label>From</label><select id="roF" class="tf-input"></select></div><div class="tf-group"><label>To</label><select id="roT" class="tf-input"></select></div></div>
+<button class="tf-submit" onclick="routeGo()">Compare routes</button></div><div id="roR" style="margin-top:16px"></div></section>
+<section class="pg" id="page-plan"><button class="back-btn" onclick="go('dashboard')">← Back to Dashboard</button>
+<div class="ph"><div><h1 class="pt">Runway <span class="gt">&amp; What-if</span></h1><p class="ps">How long will your money last in China?</p></div></div>
+<div class="smg"><div class="smc gl"><h3>Your numbers</h3>
+<div class="tf-row"><div class="tf-group"><label>Savings (৳)</label><input id="pSv" class="tf-input" type="number" value="120000" oninput="plan()"></div><div class="tf-group"><label>Family support / month (৳)</label><input id="pFm" class="tf-input" type="number" value="10000" oninput="plan()"></div></div>
+<div class="tf-row"><div class="tf-group"><label>Monthly spend (¥)</label><input id="pSp" class="tf-input" type="number" value="2500" oninput="plan()"></div><div class="tf-group"><label>Scholarship / month (¥)</label><input id="pSc" class="tf-input" type="number" value="1000" oninput="plan()"></div></div></div>
+<div class="smc gl"><h3>What if…</h3><div class="tf-group"><label>Rent changes (%)</label><input id="pR" type="range" min="-20" max="30" value="0" oninput="plan()"></div><div class="tf-group"><label>Yuan gets more expensive vs Taka (%)</label><input id="pC" type="range" min="-10" max="15" value="0" oninput="plan()"></div><label class="ck"><input id="pS" type="checkbox" checked onchange="plan()"><span>Scholarship continues</span></label></div></div>
+<div class="smc gl" style="margin-top:16px"><h3>Result</h3><div id="pO" class="smo"></div></div></section>
+<section class="pg" id="page-safety"><button class="back-btn" onclick="go('dashboard')">← Back to Dashboard</button>
+<div class="ph"><div><h1 class="pt">Safety <span class="gt">&amp; Trust</span></h1><p class="ps">Scam shield, compliance helper and transparency</p></div></div>
+<div class="dis gl"><strong>Disclaimer:</strong> FinBridge gives educational information, not financial or legal advice. Provider fees and exchange margins are sample assumptions, and rates may be approximate. Confirm live quotes and official rules before sending money. <strong>Privacy:</strong> checks on this page run in your browser; nothing you paste here is stored or sent anywhere.</div>
+<div class="smg"><div class="smc gl"><h3>🛡️ Scam Shield</h3><p class="ps">Paste a message, offer or email you received.</p><textarea id="scT" class="tf-input" placeholder="e.g. Pay a $200 visa processing fee to my personal account today, 100% guaranteed scholarship..."></textarea><button class="tf-submit" style="margin-top:10px" onclick="gid('scR').innerHTML=scamHTML(scam(gid('scT').value));logT('scam_check',{chars:gid('scT').value.length})">Check message</button><div id="scR" class="smo"></div></div>
+<div class="smc gl"><h3>📋 Compliance Helper</h3><p class="ps">Pick what you are sending money for.</p><select id="coP" class="tf-input" onchange="compl()"></select><ul id="coL"></ul><p class="ps" style="margin-top:12px">Official sources: Bangladesh Bank (authorised dealer banks), China SAFE (safe.gov.cn) and your university's international office. Rules change, so confirm before sending.</p></div>
+<div class="smc gl"><h3>🧾 Tool Call Log</h3><p class="ps">Every calculation the assistant runs appears here.</p><ul id="tlg" class="tl"></ul></div></div></section>
+<!-- CURRENCY -->
+<section class="pg" id="page-currency"><button class="back-btn" onclick="go('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to Dashboard</button>
+<div class="ph"><div><h1 class="pt">Currency <span class="gt">Converter</span></h1><p class="ps">Real-time rates across 160+ currencies</p></div></div><div class="cvr gl"><div class="cr"><div class="cig"><label>From</label><select id="fC" class="cs" onchange="calc()"><option value="BDT">🇧🇩 BDT</option><option value="USD">🇺🇸 USD</option><option value="CNY">🇨🇳 CNY</option><option value="EUR">🇪🇺 EUR</option><option value="GBP">🇬🇧 GBP</option><option value="JPY">🇯🇵 JPY</option><option value="INR">🇮🇳 INR</option><option value="MYR">🇲🇾 MYR</option><option value="KRW">🇰🇷 KRW</option><option value="PKR">🇵🇰 PKR</option></select><input type="number" id="fA" value="10000" oninput="calc()" class="ai2"></div><button class="swb" onclick="swp()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></button><div class="cig"><label>To</label><select id="tC" class="cs" onchange="calc()"><option value="BDT">🇧🇩 BDT</option><option value="USD">🇺🇸 USD</option><option value="CNY" selected>🇨🇳 CNY</option><option value="EUR">🇪🇺 EUR</option><option value="GBP">🇬🇧 GBP</option><option value="JPY">🇯🇵 JPY</option><option value="INR">🇮🇳 INR</option><option value="MYR">🇲🇾 MYR</option><option value="KRW">🇰🇷 KRW</option><option value="PKR">🇵🇰 PKR</option></select><div class="rd"><span class="ra" id="cR">—</span></div></div></div><div class="rib"><span id="rD">—</span><span>Demo rates</span></div></div>
+<h2 class="st">Popular Corridors</h2><div class="ppg"><div class="pp gl" onclick="sp('BDT','CNY')"><span class="pf">🇧🇩→🇨🇳</span><span class="pn">BDT→CNY</span><span class="pr">0.0597</span></div><div class="pp gl" onclick="sp('USD','CNY')"><span class="pf">🇺🇸→🇨🇳</span><span class="pn">USD→CNY</span><span class="pr">7.2450</span></div><div class="pp gl" onclick="sp('BDT','USD')"><span class="pf">🇧🇩→🇺🇸</span><span class="pn">BDT→USD</span><span class="pr">0.0082</span></div><div class="pp gl" onclick="sp('INR','CNY')"><span class="pf">🇮🇳→🇨🇳</span><span class="pn">INR→CNY</span><span class="pr">0.0858</span></div><div class="pp gl" onclick="sp('PKR','CNY')"><span class="pf">🇵🇰→🇨🇳</span><span class="pn">PKR→CNY</span><span class="pr">0.0261</span></div><div class="pp gl" onclick="sp('BDT','GBP')"><span class="pf">🇧🇩→🇬🇧</span><span class="pn">BDT→GBP</span><span class="pr">0.0065</span></div></div></section>
+<!-- REMITTANCE -->
+<section class="pg" id="page-remittance"><button class="back-btn" onclick="go('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to Dashboard</button>
+<div class="ph"><div><h1 class="pt">Remittance <span class="gt">Compare</span></h1><p class="ps">Find the cheapest transfer option</p></div></div><div class="rs gl"><div class="ri2"><div class="rf"><label>From</label><select><option>🇧🇩 Bangladesh</option><option>🇺🇸 USA</option><option>🇬🇧 UK</option><option>🇮🇳 India</option></select></div><div class="rf"><label>To</label><select><option>🇨🇳 China</option><option>🇺🇸 USA</option><option>🇬🇧 UK</option></select></div><div class="rf"><label>Amount (USD)</label><input type="number" value="500" id="rA"></div><button class="pb" onclick="doR()">Compare →</button></div></div><div id="rR"></div></section>
+<!-- SEND MONEY / TRANSFER -->
+<section class="pg" id="page-transfer">
+<button class="back-btn" onclick="go('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to Dashboard</button>
+<div class="ph"><div><h1 class="pt">Send <span class="gt">Money</span></h1><p class="ps">Transfer funds via WeChat Pay, Alipay, or Bank Wire</p></div></div>
+<div class="tf-tabs">
+<button class="tf-tab active" onclick="setTab(this,'wechat')"><span class="tab-icon">💚</span>WeChat Pay</button>
+<button class="tf-tab" onclick="setTab(this,'alipay')"><span class="tab-icon">🔵</span>Alipay</button>
+<button class="tf-tab" onclick="setTab(this,'bank')"><span class="tab-icon">🏦</span>Bank Wire</button>
+<button class="tf-tab" onclick="setTab(this,'card')"><span class="tab-icon">💳</span>Card Transfer</button>
+</div>
+<div id="tfForm">
+<div class="tf-form gl" style="padding:28px" id="tfFormInner">
+<h3 style="margin-bottom:20px;font-weight:700" id="tfTitle">💚 WeChat Pay Transfer</h3>
+<div class="tf-group"><label>Recipient's WeChat ID / Phone Number</label><input type="text" class="tf-input" id="tfRecipient" placeholder="Enter WeChat ID or phone number"></div>
+<div class="tf-group"><label>Recipient's Name</label><input type="text" class="tf-input" id="tfName" placeholder="Full name as registered"></div>
+<div class="tf-row">
+<div class="tf-group"><label>Amount</label><input type="number" class="tf-input" id="tfAmount" placeholder="0.00" oninput="updSummary()"></div>
+<div class="tf-group"><label>Currency</label><select class="tf-input" id="tfCurrency" onchange="updSummary()"><option value="CNY">🇨🇳 CNY — Yuan</option><option value="USD">🇺🇸 USD — Dollar</option><option value="BDT">🇧🇩 BDT — Taka</option><option value="GBP">🇬🇧 GBP — Pound</option><option value="EUR">🇪🇺 EUR — Euro</option></select></div>
+</div>
+<div class="tf-group"><label>Note (optional)</label><input type="text" class="tf-input" id="tfNote" placeholder="e.g. Tuition payment, rent"></div>
+<div class="tf-summary" id="tfSummary">
+<div class="tf-summary-row"><span style="color:var(--t2)">Amount</span><span id="tsAmt">—</span></div>
+<div class="tf-summary-row"><span style="color:var(--t2)">Transfer Fee</span><span id="tsFee">$0.00</span></div>
+<div class="tf-summary-row"><span style="color:var(--t2)">Exchange Rate</span><span id="tsRate">—</span></div>
+<div class="tf-summary-row total"><span>Recipient Gets</span><span id="tsTotal">—</span></div>
+</div>
+<button class="tf-submit" onclick="doTransfer()">Send Money Securely →</button>
+</div>
+</div>
+<div id="tfSuccess" style="display:none">
+<div class="tf-success gl" style="padding:40px">
+<div class="tf-check">✅</div>
+<h2>Transfer Successful!</h2>
+<p>Your money is on its way to the recipient.</p>
+<p style="color:var(--t2)">Estimated delivery: <strong id="tsDelivery">Instant</strong></p>
+<div class="tf-ref">Ref: <span id="tsRef">—</span></div>
+<button class="pb" style="margin:20px auto 0;display:flex" onclick="resetTf()">New Transfer</button>
+</div>
+</div>
+</section>
+<!-- BUDGET -->
+<section class="pg" id="page-budget"><button class="back-btn" onclick="go('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to Dashboard</button>
+<div class="ph"><div><h1 class="pt">Budget <span class="gt">Tracker</span></h1><p class="ps">Track student spending abroad</p></div></div><div class="bo"><div class="bs2 gl"><div class="brc"><svg viewBox="0 0 160 160"><circle cx="80" cy="80" r="70" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="12"/><circle cx="80" cy="80" r="70" fill="none" stroke="url(#bG)" stroke-width="12" stroke-dasharray="0 440" stroke-linecap="round" transform="rotate(-90 80 80)" id="bA"/><defs><linearGradient id="bG" x1="0%" y1="0%" x2="100%"><stop stop-color="#00d4ff"/><stop offset="1" stop-color="#7c3aed"/></linearGradient></defs></svg><div class="brt"><span class="bra" id="sA">¥0</span><span class="brl">of ¥5,500</span></div></div><div class="bm"><div><span class="bml">Budget</span><span class="bmv">¥5,500</span></div><div><span class="bml">Left</span><span class="bmv grn" id="rM">¥5,500</span></div><div><span class="bml">Items</span><span class="bmv" id="iC">0</span></div></div></div><div class="bc2 gl"><h3>By Category</h3><div id="cB"></div></div></div><div class="ae gl"><h3>Add Expense</h3><div class="ef"><input type="text" placeholder="Description" id="eD" class="ei"><input type="number" placeholder="Amount ¥" id="eA" class="ei"><select id="eC" class="ei"><option value="food">🍜 Food</option><option value="transport">🚌 Transport</option><option value="study">📚 Study</option><option value="rent">🏠 Rent</option><option value="entertainment">🎮 Fun</option><option value="health">🏥 Health</option><option value="other">📦 Other</option></select><button class="pb" onclick="addE()">Add</button></div></div></section>
+<!-- CHINA BANKING -->
+<section class="pg" id="page-china"><button class="back-btn" onclick="go('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to Dashboard</button>
+<div class="ph"><div><h1 class="pt">China <span class="gt">Banking</span></h1><p class="ps">Digital payments, bank accounts & financial services in China</p></div></div>
+<h2 class="st">Digital Payment Platforms</h2><div class="cg">
+<div class="cc2 gl"><div class="cc2i">💚</div><h3>WeChat Pay (微信支付)</h3><p>900M+ daily users. QR payments everywhere.</p><ul><li>Download WeChat → Me → Services → Wallet</li><li>Bind Chinese bank card or foreign passport</li><li>Visa/Mastercard linkable since 2023</li><li>Pay at all stores, restaurants, vendors</li><li>Send/receive money, split bills</li><li>Mini-programs: Didi, Meituan, JD</li></ul><div class="tr"><span class="tg g2">Most Popular</span><span class="tg">QR Pay</span><span class="tg">P2P</span></div></div>
+<div class="cc2 gl"><div class="cc2i">🔵</div><h3>Alipay (支付宝)</h3><p>Alibaba's platform — best for shopping & international features.</p><ul><li>Tour Pass: link Visa/MC directly</li><li>Taobao, Tmall, Ele.me integration</li><li>Yu'e Bao savings fund</li><li>QR payments nearly everywhere</li><li>International student verification</li><li>Sesame Credit score building</li></ul><div class="tr"><span class="tg g2">Foreign Card OK</span><span class="tg">Shopping</span><span class="tg">Financial</span></div></div>
+<div class="cc2 gl"><div class="cc2i">🔴</div><h3>UnionPay (银联)</h3><p>National card network — every ATM and POS terminal in China.</p><ul><li>ATM withdrawal from any bank</li><li>Cloud QuickPass NFC contactless</li><li>Accepted in 180+ countries</li><li>Bind to WeChat/Alipay</li></ul><div class="tr"><span class="tg a2">Card Network</span><span class="tg">ATM</span><span class="tg">NFC</span></div></div>
+<div class="cc2 gl"><div class="cc2i">🏧</div><h3>Open Bank Account</h3><p>Essential for stipends & daily use.</p><ul><li>Need: passport, admission letter, Chinese SIM</li><li>Banks: Bank of China, ICBC, CCB, ABC</li><li>Same-day debit card</li><li>Mobile banking app</li><li>Bind to WeChat + Alipay</li></ul><div class="tr"><span class="tg p2">Essential</span><span class="tg">Day 1</span></div></div>
+<div class="cc2 gl"><div class="cc2i">💳</div><h3>Visa/Mastercard</h3><p>Limited acceptance — hotels, airports, chains only.</p><ul><li>Small shops do NOT accept</li><li>Link to Alipay for wider use</li><li>WeChat foreign card binding</li><li>ATM fee: $3-5/transaction</li><li>Always carry cash backup</li></ul><div class="tr"><span class="tg a2">Limited</span><span class="tg">Link to Apps</span></div></div>
+<div class="cc2 gl"><div class="cc2i">📱</div><h3>Digital Yuan (e-CNY)</h3><p>CBDC pilot in Shenzhen, Shanghai, Beijing.</p><ul><li>No bank account needed</li><li>Zero transaction fees</li><li>Red packet subsidies</li><li>Growing acceptance</li></ul><div class="tr"><span class="tg">Pilot</span><span class="tg g2">Zero Fee</span></div></div>
+<div class="cc2 gl"><div class="cc2i">🌐</div><h3>First Week Checklist</h3><p>Financial setup when you arrive in China.</p><ul><li>Get Chinese SIM (China Mobile)</li><li>Open bank account Day 1-2</li><li>Download WeChat + Alipay</li><li>Link bank card to both</li><li>Keep ¥500-1000 cash</li><li>Save uni finance office contact</li><li>Notify home bank about travel</li></ul><div class="tr"><span class="tg g2">Must Do</span><span class="tg">Day 1</span></div></div></div>
+<div class="news-section">
+<h3>📰 China Finance News & Updates</h3>
+<div class="news-item"><h4>WeChat Pay Expands Foreign Card Support to 15 More Countries</h4><p>WeChat Pay now accepts Visa, Mastercard, and JCB cards from 15 additional countries including Bangladesh, Pakistan, and Nepal. International students can now bind cards directly without a Chinese bank account.</p><div class="news-meta"><span class="news-tag new2">NEW</span><span>Oct 12, 2026</span></div></div>
+<div class="news-item"><h4>Alipay Tour Pass Daily Limit Increased to ¥50,000</h4><p>Alipay has raised the daily transaction limit for Tour Pass users from ¥10,000 to ¥50,000, making it easier for international students to pay tuition and large expenses directly through the app.</p><div class="news-meta"><span class="news-tag update">UPDATE</span><span>Oct 8, 2026</span></div></div>
+<div class="news-item"><h4>Digital Yuan (e-CNY) Now Accepted at All Major Universities in Shenzhen</h4><p>All public universities in Shenzhen now accept e-CNY for tuition payments, cafeteria, and campus services. Students can download the e-CNY app and receive a ¥200 welcome bonus.</p><div class="news-meta"><span class="news-tag new2">NEW</span><span>Oct 5, 2026</span></div></div>
+<div class="news-item"><h4>Bank of China Launches International Student Express Account</h4><p>New simplified account opening process — passport and admission letter only, no Chinese phone number required initially. Available at 500+ branches in university districts.</p><div class="news-meta"><span class="news-tag update">UPDATE</span><span>Sep 28, 2026</span></div></div>
+<div class="news-item"><h4>UnionPay International Partners with 200+ Universities for Campus Cards</h4><p>UnionPay campus cards now serve as student ID, library card, and payment card combined. Compatible with WeChat Pay and Alipay for online payments.</p><div class="news-meta"><span class="news-tag new2">NEW</span><span>Sep 20, 2026</span></div></div>
+<div class="news-item"><h4>PBOC Advisory: Best Exchange Rates on Tuesday-Thursday</h4><p>People's Bank of China data shows BDT/CNY and USD/CNY rates are most favorable mid-week. Avoid weekend and holiday transfers when spreads widen by 0.3-0.5%.</p><div class="news-meta"><span class="news-tag alert">TIP</span><span>Sep 15, 2026</span></div></div>
+</div></section>
+
+<!-- GLOBAL BANKING -->
+<section class="pg" id="page-global">
+<button class="back-btn" onclick="go('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to Dashboard</button>
+<div class="ph"><div><h1 class="pt">Global <span class="gt">Banking</span></h1><p class="ps">International banking systems, cards & payment services worldwide</p></div></div>
+<h2 class="st">Major Global Payment Systems</h2>
+<div class="cg">
+<div class="cc2 gl" style="border-left:3px solid #1a73e8"><div class="cc2i">🌍</div><h3>SWIFT (Global Wire Transfer)</h3><p>Society for Worldwide Interbank Financial Telecommunication — used by 11,000+ banks in 200+ countries.</p><ul><li>Standard for international bank-to-bank transfers</li><li>Requires: SWIFT/BIC code + IBAN/account number</li><li>Fee: $15-50 per transfer</li><li>Speed: 1-5 business days</li><li>Most reliable for tuition payments</li></ul><div class="tr"><span class="tg" style="background:rgba(239,68,68,.12);color:#ef4444">Essential</span><span class="tg">200+ Countries</span><span class="tg">Bank-to-Bank</span></div></div>
+<div class="cc2 gl" style="border-left:3px solid #9fe870"><div class="cc2i">💚</div><h3>Wise (TransferWise)</h3><p>Best exchange rates with transparent fees. Available in 80+ countries, 50+ currencies.</p><ul><li>Mid-market exchange rate (no markup)</li><li>Fee: 0.5-2% depending on corridor</li><li>Multi-currency account available</li><li>Wise debit card for spending abroad</li><li>Fastest growing fintech transfer service</li></ul><div class="tr"><span class="tg g2">Best Rates</span><span class="tg">80+ Countries</span><span class="tg">Debit Card</span></div></div>
+<div class="cc2 gl" style="border-left:3px solid #0070ba"><div class="cc2i">🅿️</div><h3>PayPal / Xoom</h3><p>World's largest online payment platform. Xoom for international remittances.</p><ul><li>PayPal: 400M+ users, 200+ countries</li><li>Xoom: fast transfers to bank/cash pickup</li><li>Student accounts with lower fees</li><li>Buyer/seller protection for online purchases</li><li>Not accepted everywhere in China</li></ul><div class="tr"><span class="tg">400M+ Users</span><span class="tg a2">Limited in China</span></div></div>
+<div class="cc2 gl" style="border-left:3px solid #ff6600"><div class="cc2i">🟠</div><h3>Mastercard / Visa</h3><p>Global card networks accepted in 210+ countries and territories.</p><ul><li>Visa: 3.9B+ cards worldwide</li><li>Mastercard: 2.8B+ cards worldwide</li><li>Contactless payments (NFC/tap)</li><li>Foreign transaction fee: 1-3%</li><li>Travel insurance & purchase protection</li><li>Link to mobile wallets (Apple/Google Pay)</li></ul><div class="tr"><span class="tg">210+ Countries</span><span class="tg">Contactless</span><span class="tg a2">FX Fee 1-3%</span></div></div>
+<div class="cc2 gl" style="border-left:3px solid #ffdd00"><div class="cc2i">🟡</div><h3>Western Union</h3><p>Oldest money transfer service — 150+ years, 200+ countries, 500K+ agent locations.</p><ul><li>Cash pickup at agent locations worldwide</li><li>Bank transfer and mobile wallet delivery</li><li>Available where digital services aren't</li><li>Higher fees but widest physical network</li></ul><div class="tr"><span class="tg">500K Agents</span><span class="tg a2">Higher Fees</span><span class="tg">Cash Pickup</span></div></div>
+<div class="cc2 gl" style="border-left:3px solid #6c5ce7"><div class="cc2i">🔮</div><h3>Revolut</h3><p>Digital banking app with multi-currency accounts, crypto, and stock trading.</p><ul><li>Hold and exchange 30+ currencies</li><li>Free international transfers (standard)</li><li>Virtual and physical debit cards</li><li>Budget tracking built-in</li><li>Available in 35+ countries</li></ul><div class="tr"><span class="tg g2">Free Transfers</span><span class="tg">Multi-Currency</span><span class="tg">Crypto</span></div></div>
+</div>
+<div class="news-section">
+<h3>🌐 Global Finance Updates</h3>
+<div class="news-item" style="border-left-color:#ef4444"><h4>⚠️ SWIFT Fees Reduced for Student Transfers Under $1,000</h4><p>Major banks including HSBC, Citibank, and Standard Chartered have reduced SWIFT fees for educational payments under $1,000 to a flat $10. Effective from October 2026.</p><div class="news-meta"><span class="news-tag" style="background:rgba(239,68,68,.15);color:#ef4444">IMPORTANT</span><span>Oct 14, 2026</span></div></div>
+<div class="news-item"><h4>Wise Launches Student Plan — 50% Off Fees for .edu Emails</h4><p>Wise now offers a Student Plan with 50% reduced transfer fees for verified university students. Sign up with your .edu or university email to qualify.</p><div class="news-meta"><span class="news-tag new2">NEW</span><span>Oct 10, 2026</span></div></div>
+<div class="news-item" style="border-left-color:#ef4444"><h4>⚠️ Visa/Mastercard Foreign Transaction Fee Warning</h4><p>Some banks have quietly increased foreign transaction fees from 2% to 3.5%. Check your card terms before traveling. Wise and Revolut cards have 0% FX markup.</p><div class="news-meta"><span class="news-tag" style="background:rgba(239,68,68,.15);color:#ef4444">ALERT</span><span>Oct 6, 2026</span></div></div>
+<div class="news-item"><h4>PayPal Now Supports BDT (Bangladeshi Taka) for Receiving</h4><p>PayPal has added BDT to its supported receiving currencies. Bangladeshi freelancers and students can now receive payments directly in Taka without conversion.</p><div class="news-meta"><span class="news-tag update">UPDATE</span><span>Sep 30, 2026</span></div></div>
+<div class="news-item"><h4>Revolut Expands to Bangladesh and Pakistan</h4><p>Revolut digital banking is now available for residents of Bangladesh and Pakistan. Multi-currency accounts, free transfers, and virtual cards included in the free tier.</p><div class="news-meta"><span class="news-tag new2">NEW</span><span>Sep 22, 2026</span></div></div>
+</div>
+</section>
+<!-- TUITION -->
+<section class="pg" id="page-tuition"><button class="back-btn" onclick="go('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to Dashboard</button>
+<div class="ph"><div><h1 class="pt">Tuition <span class="gt">Guide</span></h1><p class="ps">Payment methods worldwide</p></div></div><div class="tc2">
+<div class="tc gl"><div class="tf2">🇨🇳</div><h3>China</h3><p class="trng">¥20,000–¥50,000/yr</p><div class="tr"><span class="tg">SWIFT</span><span class="tg">Flywire</span><span class="tg g2">WeChat</span><span class="tg g2">Alipay</span><span class="tg">Cash</span></div><div class="ttp"><p>SWIFT wire most common. Flywire partners with 100+ unis. WeChat/Alipay after arrival. Cash at bursar during enrollment.</p></div></div>
+<div class="tc gl"><div class="tf2">🇺🇸</div><h3>United States</h3><p class="trng">$15,000–$55,000/yr</p><div class="tr"><span class="tg">Flywire</span><span class="tg">PayMyTuition</span><span class="tg">Wire</span></div><div class="ttp"><p>Flywire/PayMyTuition tracked payments. Wire $30-45 fee. Some accept credit cards (2-3% surcharge).</p></div></div>
+<div class="tc gl"><div class="tf2">🇬🇧</div><h3>United Kingdom</h3><p class="trng">£12,000–£38,000/yr</p><div class="tr"><span class="tg">Flywire</span><span class="tg">TransferMate</span><span class="tg">Direct Debit</span></div><div class="ttp"><p>Flywire/TransferMate common. Direct debit installments need UK bank. Early payment discounts 2-5%.</p></div></div>
+<div class="tc gl"><div class="tf2">🇩🇪</div><h3>Germany</h3><p class="trng">€0–€1,500/sem</p><div class="tr"><span class="tg g2">Free/Low</span><span class="tg">SEPA</span><span class="tg">Blocked Acct</span></div><div class="ttp"><p>Public unis: €150-350 semester fee only. Blocked account ~€11,208/yr required for visa.</p></div></div>
+<div class="tc gl"><div class="tf2">🇯🇵</div><h3>Japan</h3><p class="trng">¥535,800/yr</p><div class="tr"><span class="tg">Bank</span><span class="tg">Conbini</span><span class="tg g2">MEXT</span></div><div class="ttp"><p>Payment slips at convenience stores. MEXT covers full tuition. 25-100% reduction for hardship.</p></div></div>
+<div class="tc gl"><div class="tf2">🇲🇾</div><h3>Malaysia</h3><p class="trng">RM 15K–50K/yr</p><div class="tr"><span class="tg g2">Affordable</span><span class="tg">FPX</span><span class="tg">Wire</span></div><div class="ttp"><p>Affordable for international students. FPX online from Malaysian banks. Installments available.</p></div></div></div></section>
+</main>
+<!-- FOOTER -->
+<footer class="footer">
+<div class="footer-grid">
+<div class="footer-brand"><span class="bn" style="font-size:1.4rem">FinBridge</span><p>AI-powered cross-border student finance assistant. Helping international students manage money, transfers, and payments across borders.</p><div class="tr" style="margin-top:12px"><span class="tg g2">Topic C — Student Finance</span><span class="tg">FinTechathon 2026</span></div></div>
+<div class="footer-col"><h4>Tools</h4><a onclick="go('currency')">Currency Converter</a><a onclick="go('remittance')">Remittance Compare</a><a onclick="go('transfer')">Send Money</a><a onclick="go('budget')">Budget Tracker</a></div>
+<div class="footer-col"><h4>Guides</h4><a onclick="go('china')">China Banking</a><a onclick="go('tuition')">Tuition Payments</a><a onclick="go('global')">Global Banking</a>
+<a onclick="go('chat')">AI Assistant</a></div>
+<div class="footer-col"><h4>About</h4><a>FinTechathon 2026</a><a>International Track</a><a>Tsinghua × WeBank</a><a>Contact Team</a></div>
+</div>
+<div class="footer-bottom">
+<span>© 2026 FinBridge AI — Shenzhen International FinTech Competition</span>
+<div class="footer-social"><a title="GitHub">GH</a><a title="Email">@</a><a title="WeChat">W</a></div>
+</div>
+</footer>
+<script>
+const cv=document.getElementById('bgC'),cx=cv.getContext('2d');let pts=[];
+function rCv(){cv.width=innerWidth;cv.height=innerHeight}addEventListener('resize',rCv);rCv();
+class Pt{constructor(){this.x=Math.random()*cv.width;this.y=Math.random()*cv.height;this.vx=(Math.random()-.5)*.4;this.vy=(Math.random()-.5)*.4;this.r=Math.random()*1.5+.5;this.o=Math.random()*.4+.1}update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>cv.width)this.vx*=-1;if(this.y<0||this.y>cv.height)this.vy*=-1}draw(){cx.beginPath();cx.arc(this.x,this.y,this.r,0,Math.PI*2);cx.fillStyle=`rgba(100,220,255,${this.o+0.3})`;cx.fill()}}
+for(let i=0;i<45;i++)pts.push(new Pt);
+function anim(){cx.clearRect(0,0,cv.width,cv.height);const g=cx.createRadialGradient(cv.width*.3,cv.height*.3,0,cv.width*.3,cv.height*.3,cv.width*.7);g.addColorStop(0,'rgba(0,100,180,.1)');g.addColorStop(1,'transparent');cx.fillStyle=g;cx.fillRect(0,0,cv.width,cv.height);pts.forEach(p=>{p.update();p.draw()});for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);if(d<130){cx.beginPath();cx.moveTo(pts[i].x,pts[i].y);cx.lineTo(pts[j].x,pts[j].y);cx.strokeStyle=`rgba(100,200,255,${.12*(1-d/130)})`;cx.lineWidth=.5;cx.stroke()}}requestAnimationFrame(anim)}anim();
+// NAV
+function go(p){document.querySelectorAll('.pg').forEach(e=>e.classList.remove('ac'));document.querySelectorAll('.ni').forEach(n=>n.classList.remove('ac'));const pg=document.getElementById('page-'+p),nv=document.querySelector('.ni[data-page="'+p+'"]');if(pg)pg.classList.add('ac');if(nv)nv.classList.add('ac');document.getElementById('sb').classList.remove('open');scrollTo(0,0)}
+// CURRENCY
+const RT={BDT:1,USD:121.45,CNY:16.76,EUR:132.5,GBP:154.2,JPY:0.81,INR:1.45,MYR:27.8,KRW:0.0907,PKR:0.4365};
+const SY={BDT:'৳',USD:'$',CNY:'¥',EUR:'€',GBP:'£',JPY:'¥',INR:'₹',MYR:'RM',KRW:'₩',PKR:'₨'};
+function calc(){const f=document.getElementById('fC').value,t=document.getElementById('tC').value,a=parseFloat(document.getElementById('fA').value)||0,b=a*RT[f],r=b/RT[t],rate=RT[f]/RT[t];document.getElementById('cR').textContent=(SY[t]||'')+' '+r.toFixed(2);document.getElementById('rD').textContent='1 '+f+' = '+rate.toFixed(6)+' '+t}
+function swp(){const f=document.getElementById('fC'),t=document.getElementById('tC'),v=f.value;f.value=t.value;t.value=v;calc()}
+function sp(a,b){document.getElementById('fC').value=a;document.getElementById('tC').value=b;calc();go('currency')}
+// CHAT
+function gT(){return new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function aM(h,t){const c=document.getElementById('cM'),d=document.createElement('div');d.className='msg '+t;if(t==='agent')d.innerHTML='<div class="ma aa">F</div><div><div class="mb">'+h+'</div><span class="mtm">'+gT()+'</span></div>';else d.innerHTML='<div><div class="mb"><p>'+esc(h)+'</p></div><span class="mtm">'+gT()+'</span></div><div class="ma ua">U</div>';c.appendChild(d);c.scrollTop=c.scrollHeight}
+function iC(){document.getElementById('cM').innerHTML='';aM('<p>Hello! I\'m <strong>FinBridge AI</strong>. How can I help?</p><div class="qa"><button class="qb" onclick="ak(\'Cheapest way to send money to China?\')">💸 Remittance</button><button class="qb" onclick="ak(\'Setup Alipay and WeChat Pay\')">📱 Mobile Pay</button><button class="qb" onclick="ak(\'Monthly budget in China\')">📊 Budget</button><button class="qb" onclick="ak(\'BDT to CNY rate\')">💱 Rates</button><button class="qb" onclick="ak(\'Open Chinese bank account\')">🏦 Banking</button><button class="qb" onclick="ak(\'Tuition payment methods\')">🎓 Tuition</button></div>','agent')}
+function ak(t){document.getElementById('cI').value=t;sndMsg()}
+function sndMsg(){const inp=document.getElementById('cI'),t=inp.value.trim();if(!t)return;aM(t,'user');inp.value='';const c=document.getElementById('cM'),ti=document.createElement('div');ti.className='msg agent';ti.id='typ';ti.innerHTML='<div class="ma aa">F</div><div><div class="mb"><div class="ti"><span></span><span></span><span></span></div></div></div>';c.appendChild(ti);c.scrollTop=c.scrollHeight;askAI(t)}
+function clrChat(){iC()}
+function rpl(q){const l=q.toLowerCase();if(l.includes('alipay')||l.includes('wechat')||l.includes('mobile'))return'<p><strong>WeChat Pay:</strong> Download WeChat → Me → Services → Wallet → bind bank card or passport. Visa/MC linkable since 2023.</p><p><strong>Alipay:</strong> Tour Pass for foreigners → link Visa/MC → spend in CNY. Best for Taobao, online shopping.</p><p><strong>Tip:</strong> Use both! WeChat for social, Alipay for shopping. Set up Day 1!</p>';if(l.includes('bank account')||l.includes('chinese bank'))return'<p><strong>Chinese Bank Account:</strong></p><p>Need: ✅ Passport ✅ Admission letter ✅ Chinese SIM</p><p>Banks: Bank of China (intl transfers), ICBC (most ATMs), CCB (good app), ABC (campus)</p><p>Visit branch → forms → debit card same day → download app → bind WeChat/Alipay.</p>';if(l.includes('remittance')||l.includes('send money')||l.includes('cheap'))return'<p><strong>Best transfer options:</strong></p><p>1. <strong>Wise</strong> — Best rate, ~$4-5 fee, 1-2 hrs ✅</p><p>2. <strong>Remitly</strong> — $3.99, minutes delivery</p><p>3. <strong>Alipay Intl</strong> — $1.99, instant</p><p>4. <strong>Western Union</strong> — $5-8, cash pickup</p><p>5. <strong>SWIFT</strong> — $25-40, for tuition</p><p>💡 Try <em>Send Money</em> tab for simulated transfer!</p>';if(l.includes('budget')||l.includes('monthly'))return'<p><strong>Monthly Budget (China):</strong></p><p>🏠 Rent: ¥800-2,000 | 🍜 Food: ¥1,000-1,500 | 🚌 Transport: ¥200-400 | 📱 Phone: ¥100-200 | 📚 Study: ¥200-400 | 🎮 Fun: ¥300-500</p><p><strong>Total: ¥2,600-5,200/mo (~$360-720)</strong></p>';if(l.includes('rate')||l.includes('bdt')||l.includes('cny'))return'<p><strong>Rates:</strong> 1 BDT = 0.0597 CNY | 1 USD = 7.245 CNY | 1 USD = 121.45 BDT | 1 CNY = 16.76 BDT</p><p>💡 Use <em>Currency Converter</em> for any pair!</p>';if(l.includes('tuition')||l.includes('payment'))return'<p><strong>China Tuition:</strong></p><p>1. SWIFT Wire ✅ ($25-40, 3-5 days)</p><p>2. Flywire ✅ (tracked, locked rate)</p><p>3. WeChat/Alipay (after arrival)</p><p>4. Cash at bursar (enrollment week)</p>';return'<p>I help with: 💱 Currency | 💸 Transfers | 📊 Budget | 📱 Alipay/WeChat | 🏦 Banking | 🎓 Tuition</p><p>Try: "<em>Setup Alipay</em>" or "<em>Send money to China</em>"</p>'}
+// REMITTANCE
+function doR(){const a=parseFloat(document.getElementById('rA').value)||500,m=7.245;const pv=[{n:'Wise',t:'Online',l:'W',bg:'#9fe870',c:'#163300',f:a*.0092+.5,mk:.0003,s:'1-2 hrs'},{n:'Remitly',t:'Online',l:'R',bg:'#2b53a8',c:'#fff',f:3.99,mk:.0035,s:'Min-3d'},{n:'Alipay Intl',t:'Mobile',l:'A',bg:'#1677FF',c:'#fff',f:1.99,mk:.005,s:'Instant'},{n:'Western Union',t:'Cash/Bank',l:'WU',bg:'#ffdd00',c:'#000',f:4.99+.01*a,mk:.012,s:'1-3d'},{n:'Bank SWIFT',t:'Wire',l:'B',bg:'#1a365d',c:'#fff',f:30,mk:.02,s:'3-5d'}];const rs=pv.map(p=>{const r=m*(1-p.mk),g=(a-p.f)*r;return{...p,rate:r.toFixed(4),gets:g.toFixed(2),fd:p.f.toFixed(2)}}).sort((a,b)=>b.gets-a.gets);rs[0].best=true;document.getElementById('rR').innerHTML=rs.map(r=>'<div class="rc gl '+(r.best?'best':'')+'">'+(r.best?'<div class="rbdg">Best</div>':'')+'<div class="rp"><div class="rplogo" style="background:'+r.bg+';color:'+r.c+'">'+r.l+'</div><div><h3>'+r.n+'</h3><span class="rpt">'+r.t+'</span></div></div><div class="rdet"><div><span class="rsl">Rate</span><span class="rsv">'+r.rate+'</span></div><div><span class="rsl">Fee</span><span class="rsv">$'+r.fd+'</span></div><div><span class="rsl">Gets</span><span class="rsv hl">¥'+r.gets+'</span></div><div><span class="rsl">Speed</span><span class="rsv">'+r.s+'</span></div></div></div>').join('')}
+// TRANSFER
+let curTab='wechat';
+const tabCfg={wechat:{title:'💚 WeChat Pay Transfer',recLabel:"Recipient's WeChat ID / Phone",fee:0,delivery:'Instant'},alipay:{title:'🔵 Alipay Transfer',recLabel:"Recipient's Alipay ID / Phone",fee:1.99,delivery:'Instant'},bank:{title:'🏦 Bank Wire Transfer',recLabel:'Bank Account Number (IBAN/SWIFT)',fee:25,delivery:'3-5 business days'},card:{title:'💳 Card Transfer',recLabel:'Card Number (Visa/MC/UnionPay)',fee:8.50,delivery:'1-2 business days'}};
+function setTab(el,tab){document.querySelectorAll('.tf-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');curTab=tab;const cfg=tabCfg[tab];document.getElementById('tfTitle').textContent=cfg.title;document.getElementById('tfRecipient').placeholder=cfg.recLabel;document.getElementById('tfRecipient').value='';document.getElementById('tfName').value='';document.getElementById('tfAmount').value='';document.getElementById('tfNote').value='';document.getElementById('tfSuccess').style.display='none';document.getElementById('tfForm').style.display='block';updSummary()}
+function updSummary(){const a=parseFloat(document.getElementById('tfAmount').value)||0,cur=document.getElementById('tfCurrency').value,cfg=tabCfg[curTab];const fee=cfg.fee;const toCNY=a*(RT[cur]/RT['CNY']);document.getElementById('tsAmt').textContent=(SY[cur]||'')+a.toFixed(2);document.getElementById('tsFee').textContent='$'+fee.toFixed(2);document.getElementById('tsRate').textContent='1 '+cur+' = '+(RT[cur]/RT['CNY']).toFixed(4)+' CNY';document.getElementById('tsTotal').textContent='¥'+(toCNY-fee*(RT['USD']/RT['CNY'])).toFixed(2)}
+function doTransfer(){const rec=document.getElementById('tfRecipient').value.trim(),name=document.getElementById('tfName').value.trim(),amt=document.getElementById('tfAmount').value;if(!rec||!name||!amt){alert('Please fill all required fields');return}document.getElementById('tfForm').style.display='none';document.getElementById('tfSuccess').style.display='block';document.getElementById('tsDelivery').textContent=tabCfg[curTab].delivery;document.getElementById('tsRef').textContent='FB-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).substr(2,4).toUpperCase()}
+function resetTf(){document.getElementById('tfSuccess').style.display='none';document.getElementById('tfForm').style.display='block';document.getElementById('tfRecipient').value='';document.getElementById('tfName').value='';document.getElementById('tfAmount').value='';document.getElementById('tfNote').value=''}
+// BUDGET
+let exps=[];const cCl={food:'#7c3aed',transport:'#10b981',study:'#f59e0b',rent:'#00d4ff',entertainment:'#ef4444',health:'#06b6d4',other:'#8b5cf6'};const cNm={food:'Food',transport:'Transport',study:'Study',rent:'Rent',entertainment:'Fun',health:'Health',other:'Other'};const BU=5500;
+function uB(){const tot=exps.reduce((s,e)=>s+e.a,0),pct=Math.min(tot/BU,1);document.getElementById('sA').textContent='¥'+tot.toLocaleString();document.getElementById('rM').textContent='¥'+(BU-tot).toLocaleString();document.getElementById('iC').textContent=exps.length;document.getElementById('bA').setAttribute('stroke-dasharray',(pct*440).toFixed(0)+' 440');const cats={};exps.forEach(e=>{cats[e.c]=(cats[e.c]||0)+e.a});const mx=Math.max(...Object.values(cats),1);document.getElementById('cB').innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([k,v])=>'<div class="ci"><div class="cinf"><span class="cdot" style="background:'+cCl[k]+'"></span><span class="cnm">'+cNm[k]+'</span></div><div class="cbw"><div class="cb" style="width:'+(v/mx*100)+'%;background:'+cCl[k]+'"></div></div><span class="cam">¥'+v.toLocaleString()+'</span></div>').join('')}
+function addE(){const d=document.getElementById('eD').value.trim(),a=parseFloat(document.getElementById('eA').value),c=document.getElementById('eC').value;if(!d||!a)return;exps.push({d,a,c});setTimeout(hs,0);document.getElementById('eD').value='';document.getElementById('eA').value='';uB();const b=document.querySelector('.ae .pb');b.textContent='✓ Added!';b.style.background='linear-gradient(135deg,#10b981,#059669)';setTimeout(()=>{b.textContent='Add';b.style.background=''},1000)}
+// LIVE RATE
+setInterval(()=>{const b=121.45,c=(Math.random()-.5)*.3,n=(b+c).toFixed(2),p=((c/b)*100).toFixed(2);document.getElementById('uB').textContent=n;const ch=document.getElementById('rC');ch.textContent=(p>=0?'+':'')+p+'%';ch.className='rate-change '+(p>=0?'positive':'negative')},5000);
+// INIT
+calc();iC();doR();exps=[{d:'Rent',a:1800,c:'rent'},{d:'Food',a:1200,c:'food'},{d:'Metro',a:300,c:'transport'},{d:'Books',a:400,c:'study'},{d:'Movies',a:150,c:'entertainment'}];uB();updSummary();
+
+// ===== SMART TOOLS =====
+const gid=id=>document.getElementById(id);
+function goal(){const a=+gid('gA').value||0,m=Math.max(+gid('gM').value||1,1),s=+gid('gS').value||0,need=Math.max(a-s,0),mo=need/m,p=a?Math.min(s/a*100,100):0;gid('gB').style.width=p.toFixed(0)+'%';gid('gO').innerHTML=need?'Save <strong>$'+mo.toFixed(0)+'</strong>/month (≈ <strong>৳'+Math.round(mo*RT.USD).toLocaleString()+'</strong> or ¥'+Math.round(mo*RT.USD/RT.CNY).toLocaleString()+') · '+p.toFixed(0)+'% done':'🎉 Goal reached!';hs()}
+let alertT=null;
+function setAlert(){alertT=+gid('raT').value||null;gid('raO').textContent=alertT?'Alert set for ৳'+alertT.toFixed(2)+'. Keep this tab open; the live rate is checked every few seconds.':''}
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),5000)}
+setInterval(()=>{if(!alertT)return;const r=parseFloat(gid('uB').textContent);if(r>=alertT){toast('🔔 USD/BDT reached ৳'+r.toFixed(2)+' — good time to send money!');alertT=null;gid('raO').textContent='Alert triggered ✅'}},2000);
+function hf(){const a=+gid('hfA').value||0,b=+gid('hfR').value||0,m=RT.USD,loss=Math.max((m-b)*a,0),pc=(m-b)/m*100;gid('hfO').innerHTML=loss?'Mid-market rate: ৳'+m+'. You lose about <strong class="bad">৳'+Math.round(loss).toLocaleString()+'</strong> (≈ $'+(loss/m).toFixed(2)+', '+pc.toFixed(2)+'% hidden margin). Check the Remittance tab for better options.':'✅ This rate is at or better than mid-market.'}
+const CK=['Passport & visa valid','Admission letter / JW202 form','Tuition paid & receipt saved','Alipay / WeChat Pay installed','Visa/Mastercard activated for abroad','Bank notified of travel','Emergency cash in CNY','Health insurance document'];
+let ckS={};try{ckS=JSON.parse(localStorage.getItem('fbCk')||'{}')}catch(e){}
+function ckR(){gid('ckL').innerHTML=CK.map((t,i)=>'<label class="ck"><input type="checkbox" '+(ckS[i]?'checked':'')+' onchange="ckT('+i+',this.checked)"><span>'+t+'</span></label>').join('');ckU()}
+function ckT(i,v){ckS[i]=v;try{localStorage.setItem('fbCk',JSON.stringify(ckS))}catch(e){}ckU()}
+function ckU(){const n=CK.filter((_,i)=>ckS[i]).length;gid('ckB').style.width=(n/CK.length*100)+'%';hs()}
+// ===== FINANCIAL HEALTH SCORE =====
+function hs(){const tot=exps.reduce((s,e)=>s+e.a,0),r=tot/BU,n=CK.filter((_,i)=>ckS[i]).length/CK.length,gp=Math.min((+gid('gS').value||0)/(+gid('gA').value||1),1),sc=Math.round(Math.max(0,Math.min(100,(r<=.8?60:60-(r-.8)*150)+gp*25+n*15))),tips=[];tips.push(r>.8?'Spending is '+Math.round(r*100)+'% of your ¥'+BU+' budget — trim dining or entertainment.':'Spending is within budget ('+Math.round(r*100)+'%).');if(gp<.5)tips.push('Tuition savings are under 50% of your goal — raise your monthly saving.');if(n<.5)tips.push('Finish your pre-departure checklist in Smart Tools.');gid('hsN').textContent=sc;const R=gid('hsR');R.style.setProperty('--p',sc);R.style.setProperty('--c',sc>=75?'#059669':sc>=50?'#d97706':'#dc2626');gid('hsL').innerHTML=tips.map(t=>'<li>'+t+'</li>').join('')}
+// ===== REAL BACKEND CHAT (falls back to built-in replies) =====
+function md(s){const L=esc(s).split('\n');let o='',tb=false;for(const l of L){if(/^\|/.test(l)){if(/^\|[-| ]+\|$/.test(l))continue;o+=(tb?'':'<table>')+'<tr>'+l.split('|').slice(1,-1).map(x=>'<td>'+x.trim()+'</td>').join('')+'</tr>';tb=true}else{if(tb){o+='</table>';tb=false}o+=l+'<br>'}}if(tb)o+='</table>';return '<p>'+o.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>')+'</p>'}
+async function askAI(t){let h;try{const c=new AbortController();setTimeout(()=>c.abort(),4000);const r=await fetch('http://localhost:8000/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:t}),signal:c.signal});if(!r.ok)throw 0;h=md((await r.json()).reply)}catch(e){h=rpl(t)}const e=document.getElementById('typ');if(e)e.remove();aM(h,'agent')}
+// ===== VOICE INPUT =====
+(function(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition,w=document.querySelector('.iw');if(!SR||!w)return;const b=document.createElement('button');b.className='ib mic';b.title='Speak your question';b.textContent='🎤';b.onclick=()=>{const r=new SR();r.lang='en-US';r.onresult=e=>{gid('cI').value=e.results[0][0].transcript;sndMsg()};r.start()};w.insertBefore(b,w.lastElementChild)})();
+goal();hf();ckR();hs();
+
+// ===== ALL CURRENCIES (China-centred, CNY base) =====
+const CUR=[['CNY','Chinese Yuan','🇨🇳',1],['USD','US Dollar','🇺🇸',.138],['EUR','Euro','🇪🇺',.118],['GBP','British Pound','🇬🇧',.102],['JPY','Japanese Yen','🇯🇵',21],['KRW','South Korean Won','🇰🇷',190],['HKD','Hong Kong Dollar','🇭🇰',1.08],['MOP','Macanese Pataca','🇲🇴',1.11],['TWD','Taiwan Dollar','🇹🇼',4.4],['SGD','Singapore Dollar','🇸🇬',.18],['MYR','Malaysian Ringgit','🇲🇾',.6],['THB','Thai Baht','🇹🇭',4.7],['VND','Vietnamese Dong','🇻🇳',3500],['IDR','Indonesian Rupiah','🇮🇩',2200],['PHP','Philippine Peso','🇵🇭',7.9],['INR','Indian Rupee','🇮🇳',11.5],['PKR','Pakistani Rupee','🇵🇰',38.5],['BDT','Bangladeshi Taka','🇧🇩',16.76],['LKR','Sri Lankan Rupee','🇱🇰',42],['NPR','Nepalese Rupee','🇳🇵',18.4],['MMK','Myanmar Kyat','🇲🇲',290],['KHR','Cambodian Riel','🇰🇭',560],['LAK','Lao Kip','🇱🇦',3000],['MNT','Mongolian Tugrik','🇲🇳',470],['KZT','Kazakh Tenge','🇰🇿',70],['UZS','Uzbek Som','🇺🇿',1750],['RUB','Russian Ruble','🇷🇺',11.3],['AED','UAE Dirham','🇦🇪',.507],['SAR','Saudi Riyal','🇸🇦',.518],['QAR','Qatari Riyal','🇶🇦',.503],['KWD','Kuwaiti Dinar','🇰🇼',.0425],['TRY','Turkish Lira','🇹🇷',4.5],['ILS','Israeli Shekel','🇮🇱',.52],['EGP','Egyptian Pound','🇪🇬',6.7],['NGN','Nigerian Naira','🇳🇬',210],['KES','Kenyan Shilling','🇰🇪',17.8],['ZAR','South African Rand','🇿🇦',2.5],['AUD','Australian Dollar','🇦🇺',.21],['NZD','New Zealand Dollar','🇳🇿',.23],['CAD','Canadian Dollar','🇨🇦',.19],['MXN','Mexican Peso','🇲🇽',2.5],['BRL','Brazilian Real','🇧🇷',.78],['ARS','Argentine Peso','🇦🇷',130],['CHF','Swiss Franc','🇨🇭',.11],['SEK','Swedish Krona','🇸🇪',1.45],['NOK','Norwegian Krone','🇳🇴',1.45],['DKK','Danish Krone','🇩🇰',.88],['PLN','Polish Zloty','🇵🇱',.5],['CZK','Czech Koruna','🇨🇿',2.9],['HUF','Hungarian Forint','🇭🇺',47]];
+const SYM={CNY:'¥',USD:'$',EUR:'€',GBP:'£',JPY:'¥',KRW:'₩',INR:'₹',BDT:'৳',PKR:'₨',THB:'฿',VND:'₫',PHP:'₱',RUB:'₽',TRY:'₺',ILS:'₪',NGN:'₦',HKD:'HK$',SGD:'S$',AUD:'A$',CAD:'C$',MYR:'RM',TWD:'NT$'};
+let perCNY={};CUR.forEach(c=>perCNY[c[0]]=c[3]);let rateNote='Approximate rates (offline)';
+function applyRates(){const b=perCNY.BDT;CUR.forEach(c=>{RT[c[0]]=b/perCNY[c[0]];SY[c[0]]=SYM[c[0]]||c[0]+' '});RT.BDT=1}
+function fillSel(id){const e=gid(id);if(!e)return;const v=e.value||'';e.innerHTML=CUR.map(c=>'<option value="'+c[0]+'">'+c[2]+' '+c[0]+' — '+c[1]+'</option>').join('');if(v&&RT[v])e.value=v}
+function rateTable(q){q=(q||'').toLowerCase();gid('rtB').innerHTML=CUR.filter(c=>!q||(c[0]+c[1]).toLowerCase().includes(q)).map(c=>'<tr onclick="sp(\''+c[0]+'\',\'CNY\')"><td>'+c[2]+' '+c[0]+'</td><td>'+c[1]+'</td><td>'+perCNY[c[0]].toLocaleString(undefined,{maximumSignificantDigits:5})+'</td><td>'+(1/perCNY[c[0]]).toLocaleString(undefined,{maximumSignificantDigits:5})+'</td></tr>').join('');gid('rtN').textContent=rateNote}
+function refreshAll(){applyRates();['fC','tC','tfCurrency'].forEach(fillSel);rateTable(gid('rtQ').value);calc();updSummary()}
+(function(){const w=document.createElement('div');w.className='rtw gl';w.innerHTML='<h3>🌏 All Currency Rates vs Chinese Yuan (CNY)</h3><span class="ps" id="rtN"></span><input id="rtQ" placeholder="Search currency… (e.g. USD, Taka, Yen)" oninput="rateTable(this.value)"><div class="rts"><table class="rtb"><thead><tr><th>Code</th><th>Currency</th><th>1 CNY =</th><th>1 unit = CNY</th></tr></thead><tbody id="rtB"></tbody></table></div>';gid('page-currency').appendChild(w);refreshAll();
+fetch('https://open.er-api.com/v6/latest/CNY').then(r=>r.json()).then(d=>{if(d.rates&&d.rates.BDT){CUR.forEach(c=>{if(d.rates[c[0]])perCNY[c[0]]=d.rates[c[0]]});rateNote='Live rates · '+(d.time_last_update_utc||'').slice(0,16);refreshAll()}}).catch(()=>{})})();
+
+// ===== TOOLS: ROUTE / PLAN / SAFETY / CHAT AGENT =====
+const fmt=x=>x.toLocaleString(undefined,{maximumFractionDigits:2}),LOG=[];
+function logT(n,a){LOG.unshift(new Date().toLocaleTimeString()+' · '+n+'('+JSON.stringify(a)+')');const e=gid('tlg');if(e)e.innerHTML=LOG.slice(0,12).map(x=>'<li>'+esc(x)+'</li>').join('')}
+const PV=[['Digital specialist',.005,1,.004,0,6],['Money-transfer operator',.015,0,.01,0,2],['Exchange house / agent',.01,3,.015,0,24],['Bank wire (SWIFT)',.003,20,.025,10,72]];
+function routeCalc(a,f,t,pri){const mid=RT[f]/RT[t],u=RT.USD;return PV.map(p=>{const fee=a*p[1]+p[2]*u/RT[f],net=a-fee,rcv=net*mid*(1-p[3])-p[4]*u/RT[t],ideal=a*mid;return{n:p[0],fee:fee*mid,mg:net*mid*p[3],rv:p[4]*u/RT[t],rcv,cost:ideal-rcv,pct:(ideal-rcv)/ideal*100,h:p[5],mid}}).sort((x,y)=>pri==='fast'?x.h-y.h||x.cost-y.cost:x.cost-y.cost)}
+function routeHTML(a,f,t,pri){const r=routeCalc(a,f,t,pri);return '<p><strong>'+fmt(a)+' '+f+' → '+t+'</strong> · mid-market 1 '+f+' = '+fmt(r[0].mid)+' '+t+'</p>'+r.map((x,i)=>'<div class="rc'+(i?'':' best')+'">'+(i?'':'<span class="rbdg">'+(pri==='fast'?'FASTEST':'CHEAPEST')+'</span>')+'<div class="rp"><div><h3>'+x.n+'</h3><span class="rpt">~'+x.h+'h</span></div></div><div class="rdet"><div><span class="rsl">Recipient gets</span><span class="rsv hl">'+fmt(x.rcv)+' '+t+'</span></div><div><span class="rsl">Total cost</span><span class="rsv">'+fmt(x.cost)+' '+t+' ('+x.pct.toFixed(2)+'%)</span></div><div><span class="rsl">Effective rate</span><span class="rsv">'+fmt(x.rcv/a)+'</span></div><div><span class="rsl">Fee / margin / receiving</span><span class="rsv">'+fmt(x.fee)+' / '+fmt(x.mg)+' / '+fmt(x.rv)+'</span></div></div></div>').join('')+'<p class="ps">Sample provider assumptions, not live quotes. Costs shown in '+t+'.</p>'}
+function routeGo(){const a=+gid('roA').value||0,f=gid('roF').value,t=gid('roT').value;if(f===t||!a){gid('roR').innerHTML='<p class="ps">Choose two different currencies and an amount.</p>';return}logT('route_compare',{amount:a,from:f,to:t});gid('roR').innerHTML=routeHTML(a,f,t,gid('roP').value)}
+function routeTable(a,f,t){const r=routeCalc(a,f,t,'cheap');return '<p><strong>'+fmt(a)+' '+f+' → '+t+'</strong> (mid-market 1 '+f+' = '+fmt(r[0].mid)+' '+t+')</p><table><tr><td>Provider</td><td>Recipient gets</td><td>Cost</td></tr>'+r.slice(0,3).map(x=>'<tr><td>'+x.n+'</td><td>'+fmt(x.rcv)+' '+t+'</td><td>'+x.pct.toFixed(2)+'%</td></tr>').join('')+'</table><p><a href="#" onclick="go(\'route\');return false" style="color:#00d4ff">Open full comparison →</a></p>'}
+function plan(){const g=id=>+gid(id).value||0,x=g('pC')/100,rn=g('pR')/100,ft=gid('pS').checked,run=(cx,rr,sc)=>{const rt=RT.CNY*(1+cx),sv=g('pSv')/rt,sp=g('pSp')*(1+.4*rr),inc=g('pFm')/rt+(sc?g('pSc'):0),burn=sp-inc;return{sp,inc,m:burn>0?sv/burn:Infinity}},b=run(0,0,true),s=run(x,rn,ft),f=r=>r.m===Infinity?'unlimited (income covers spending)':r.m.toFixed(1)+' months';gid('pO').innerHTML='<p>Baseline: <strong>'+f(b)+'</strong></p><p>Your scenario (rent '+(rn>=0?'+':'')+Math.round(rn*100)+'%, yuan '+(x>=0?'+':'')+Math.round(x*100)+'%, scholarship '+(ft?'continues':'stops')+'): <strong>'+f(s)+'</strong></p><p>Monthly spend ¥'+Math.round(s.sp)+' vs income ¥'+Math.round(s.inc)+(s.m<6?'<br>⚠ Under 6 months of runway: consider cutting costs or arranging extra support.':'')+'</p><p class="ps">Assumes rent is 40% of spending and savings are held in Taka.</p>'}
+const SC=[[/urgent|immediately|within 24|last chance|today only/i,'Pressure or urgency'],[/(visa|scholarship|admission|clearance|customs|release)\s*(fee|charge|deposit)|processing fee|advance (fee|payment)/i,'Asks for an advance fee'],[/guarantee|100%\s*(approved|sure)|no (interview|ielts|hsk)/i,'Guaranteed outcome'],[/\botp\b|password|\bpin\b|cvv|card number/i,'Asks for secret codes'],[/gift ?card|crypto|bitcoin|usdt|western union|personal account/i,'Untraceable or personal payment'],[/whatsapp|telegram|wechat|only chat/i,'Moves you to a private chat app'],[/police|embassy|arrest|parcel|illegal|frozen/i,'Threat or impersonates authority'],[/bit\.ly|tinyurl|http:\/\//i,'Suspicious link']];
+function scam(t){const hit=SC.filter(s=>s[0].test(t)).map(s=>s[1]);return{hit,lv:hit.length>=3?'HIGH':hit.length>=1?'MEDIUM':'LOW'}}
+function scamHTML(r){const c={HIGH:'#f87171',MEDIUM:'#fbbf24',LOW:'#34d399'}[r.lv];return '<p><span class="rk" style="background:'+c+'22;color:'+c+'">'+r.lv+' RISK</span></p>'+(r.hit.length?'<ul>'+r.hit.map(x=>'<li>'+x+'</li>').join('')+'</ul>':'<p>No common scam patterns found, but stay careful.</p>')+'<p>Never pay "fees" to personal accounts, never share OTP/PIN, and verify admission or visa claims on the official university or embassy website.</p>'}
+const CP={'Tuition payment':['Keep your admission letter and the university\'s official fee notice','Pay only to the account named on the university invoice','Use an authorised dealer bank or licensed provider and keep the receipt','Ask the university finance office to confirm they received it'],'Monthly living support':['Keep proof of purpose if the bank asks for it','Send through licensed channels only; avoid personal-account "agents"','Check per-transfer and yearly limits with your bank and the receiving side','Keep records as financial proof for visa or residence-permit renewal'],'Receiving scholarship or stipend':['Open a Chinese bank account with passport and residence permit','Ask your university how the stipend is paid (account or Alipay)','Follow local rules on declaring any part-time income']};
+function compl(){gid('coL').innerHTML=CP[gid('coP').value].map(x=>'<li>'+x+'</li>').join('')}
+const AL={taka:'BDT',tk:'BDT',yuan:'CNY',rmb:'CNY',dollar:'USD',dollars:'USD',euro:'EUR',rupee:'INR',pound:'GBP',yen:'JPY',won:'KRW',ringgit:'MYR',baht:'THB',dirham:'AED',riyal:'SAR',china:'CNY',bangladesh:'BDT',usa:'USD',uk:'GBP',japan:'JPY',korea:'KRW',india:'INR'};CUR.forEach(c=>AL[c[0].toLowerCase()]=c[0]);
+const curs=l=>{const o=[];(l.match(/[a-z]+/g)||[]).forEach(w=>{const c=AL[w];if(c&&!o.includes(c))o.push(c)});return o},amt=l=>{const m=l.replace(/,/g,'').match(/(\d+(?:\.\d+)?)\s*(k|lakh|lac)?\b/);return m?+m[1]*(m[2]==='k'?1000:m[2]?100000:1):0};
+const why=(a,b)=>'<details style="margin-top:8px;font-size:.78rem;color:#8898c0"><summary>Why this answer?</summary><p style="color:#8898c0">'+a+'</p><p style="color:#8898c0">Data: '+b+'</p></details>';
+function toolReply(t){const l=t.toLowerCase(),cs=curs(l),a=amt(l);
+if(/scam|fraud|fake|suspicious|protarok|too good/.test(l)){const r=scam(t);logT('scam_check',{flags:r.hit.length});return scamHTML(r)+why('Keyword rules matched against your message (urgency, advance fees, secret codes, etc.). It cannot prove a message is safe.','your message only, checked in the browser')}
+if(/runway|how long|kotodin|last me|cholbe/.test(l)){plan();logT('runway',{source:'Runway Plan page values'});return gid('pO').innerHTML+'<p><a href="#" onclick="go(\'plan\');return false" style="color:#00d4ff">Change the numbers →</a></p>'+why('Savings ÷ monthly shortfall (spend minus scholarship and family support), using the values on the Runway Plan page.',rateNote)}
+if(cs.length>=2&&/send|transfer|pathat|remit|cheap|shosta|best|fast/.test(l)){const q=a||1000;logT('route_compare',{amount:q,from:cs[0],to:cs[1]});return routeTable(q,cs[0],cs[1])+why('Ranks 4 sample provider models by total cost = fee + exchange margin + receiving fee. Assumptions are illustrative, not live quotes.',rateNote)}
+if(cs.length>=2&&/rate|convert|koto|to\b/.test(l)){const q=a||1;logT('convert',{amount:q,from:cs[0],to:cs[1]});return '<p><strong>'+fmt(q)+' '+cs[0]+' ≈ '+fmt(q*RT[cs[0]]/RT[cs[1]])+' '+cs[1]+'</strong></p>'+why('Mid-market conversion; no provider fees or margin included.',rateNote)}
+return null}
+const _ask=askAI;askAI=async function(t){const h=toolReply(t);if(h){const e=gid('typ');if(e)e.remove();aM(h,'agent')}else await _ask(t)};
+(function(){fillSel('roF');fillSel('roT');gid('roF').value='BDT';gid('roT').value='CNY';gid('coP').innerHTML=Object.keys(CP).map(k=>'<option>'+k+'</option>').join('');const ih=document.querySelector('.ih');if(ih)ih.insertAdjacentText('beforeend',' · Educational info, not financial advice.');plan();compl();routeGo();logT('app_start',{rates:rateNote})})();
+</script></body></html>
